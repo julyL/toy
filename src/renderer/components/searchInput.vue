@@ -14,9 +14,22 @@
         remote,
         ipcRenderer
     } = require('electron');
+    const {
+        spawn
+    } = require("child_process");
+    import emitter from "../../main/emitter";
+    import appConfig from '../../config/app';
 
     export default {
         name: 'search',
+        created() {
+            emitter.emit("db", {
+                action: "getStartApp",
+                cb: (data) => {
+                    this.startApp = data;
+                }
+            })
+        },
         mounted() {
             ipcRenderer.on("focusSearchInput", () => {
                 this.fixPointerPosition()
@@ -26,7 +39,9 @@
             return {
                 searchWord: "",
                 activeIndex: 0,
-                searchResultList: []
+                searchResultList: [],
+                action: "",
+                startApp: []
             }
         },
         watch: {
@@ -58,26 +73,43 @@
                     this.fixPointerPosition();
                     this.activeIndex = (this.activeIndex + 1) % len;
                 } else if (e.keyCode == 13) {
-                    this.dealSelect();
+                    this.handleSelect();
                 } else {
-                    this.getSearchList();
+                    setTimeout(() => {
+                        this.getSearchList();
+                    }, 0);
                 }
             },
             getSearchList() {
-                setTimeout(() => {
-                    if (this.searchWord.trim()) {
-                        let list = [{
-                            name: "添加快速启动",
-                            router: "quickStart"
-                        }];
-                        for (var i = 0; i <= parseInt(Math.random() * 10); i++) {
-                            list.push({
-                                name: "随机--" + i
-                            })
+                let word = this.searchWord.trim();
+                if (word) {
+                    let list = [],
+                        isMatch = false;
+                    appConfig.pre_actions.forEach(item => {
+                        if (isMatch) {
+                            return;
                         }
-                        this.searchResultList = list;
+                        item.keywords.forEach(keyword => {
+                            if (!isMatch && new RegExp("^" + keyword + " ").test(this.searchWord)) {
+                                isMatch = true;
+                                list.push({
+                                    name: item.name,
+                                    url: item.url,
+                                    openBrower: true,
+                                    keyword
+                                })
+                                this.activeIndex = 0;
+                            }
+                        })
+                    })
+                    if (!isMatch) {
+                        list = this.startApp.filter(v => {
+                            v.app = true;
+                            return new RegExp(word, "gi").test(v.name);
+                        })
                     }
-                }, 0);
+                    this.searchResultList = list;
+                }
             },
             fixPointerPosition() {
                 this.$refs.sInput.blur();
@@ -85,12 +117,20 @@
                     this.$refs.sInput.focus();
                 }, 17);
             },
-            dealSelect() {
-                if (this.activeSearchItem.router) {
+            handleSelect() {
+                let act = this.activeSearchItem;
+
+                if (act.router) { // 打开新页面
                     console.log('ipcRenderer send vue-router');
                     ipcRenderer.send("vue-router", {
-                        router: this.activeSearchItem.router
+                        router: act.router
                     })
+                } else if (act.app) { // 打开文件
+                    spawn(act.path);
+                } else if (act.openBrower) { // 打开浏览器搜索
+                    let url = act.url + encodeURIComponent(this.searchWord.replace(new RegExp("^" + act.keyword + "\s*"),
+                        ""));
+                    this.open(url)
                 }
             }
         }

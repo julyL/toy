@@ -35,7 +35,7 @@ function createWindow() {
 
   if (config.DEBUG) {
     mainWindow.webContents.openDevTools({
-      mode: "right"
+      detach: true
     });
   }
 

@@ -30,16 +30,8 @@
 
 <script>
     const path = require("path");
-    const low = require('lowdb');
-    const FileSync = require('lowdb/adapters/FileSync');
     const dayjs = require("dayjs");
-
-    const adapter = new FileSync(path.resolve(__dirname, '../../config/db.json'));
-    const db = low(adapter);
-
-    db.defaults({
-        startApp: []
-    }).write()
+    import emitter from "../../main/emitter";
 
     export default {
         created() {
@@ -49,7 +41,7 @@
             var $upload = $(".upload");
             $upload.on("drop", e => {
                 for (let f of e.originalEvent.dataTransfer.files) {
-                    this.insertTableData(fpath);
+                    this.insertTableData(f.path);
                 }
             })
         },
@@ -64,7 +56,10 @@
         watch: {
             tableData: {
                 handler: function (val) {
-                    db.set("startApp", val).write();
+                    emitter.emit("db", {
+                        action: "setStartApp",
+                        data: val
+                    })
                 },
                 deep: true
             }
@@ -102,8 +97,13 @@
                 console.log(index, row);
             },
             getTabaleData() {
-                let tableData = db.get("startApp").value();
-                this.tableData = tableData;
+                emitter.emit("db", {
+                    action: "getStartApp",
+                    cb: (data) => {
+                        console.log(111, data);
+                        this.tableData = data;
+                    }
+                })
             }
         },
         components: {
