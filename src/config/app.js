@@ -10,20 +10,20 @@ module.exports = {
         router: "quickStart"
     }],
     pre_actions: [{
-        name: "search in Baidu",
+        name: "Search in Baidu",
         keywords: ["b", "bd"],
         url: "https://www.baidu.com/s?wd="
     }, {
-        name: "search in Google",
+        name: "Search in Google",
         keywords: ["g", "gg"],
         url: "https://www.google.com/search?q="
     }, {
-        name: "search in Stackoverlfow",
+        name: "Search in Stackoverflow",
         keywords: ["s", "st"],
         url: "https://stackoverflow.com/search?q="
     }, {
         name: "打开百度地图",
         keywords: ["m", "map"],
-        url: " https://map.baidu.com/?q="
+        url: "https://map.baidu.com/?q="
     }]
 };

@@ -1,8 +1,8 @@
 <template>
     <div id="wrapper">
-        <input type="text" placeholder="Search" @keydown="keydown($event)" id="search" v-model="searchWord" ref="sInput" autofocus>
+        <input type="text" placeholder="Search" @keydown="handleKeydown($event)" id="search" v-model="searchWord" ref="sInput" autofocus>
         <div id="search-list">
-            <div class="search-li" v-for="(item,index) in searchResultList" :class="index==activeIndex?'active-li':''" :key="index">
+            <div class="search-li" v-for="(item,index) in searchResultList" :class="index==activeIndex?'active-li':''" :key="index" @click="handleSelect">
                 <div class="s-word">{{item.name}}</div>
             </div>
         </div>
@@ -64,16 +64,19 @@
             open(link) {
                 this.$electron.shell.openExternal(link)
             },
-            keydown(e) {
+            handleKeydown(e) {
                 let len = this.searchResultList.length;
+                console.log(e.keyCode);
                 if (e.keyCode == 38) { // up
                     this.fixPointerPosition();
                     this.activeIndex = (this.activeIndex - 1 + len) % len;
                 } else if (e.keyCode == 40) { // down
                     this.fixPointerPosition();
                     this.activeIndex = (this.activeIndex + 1) % len;
-                } else if (e.keyCode == 13) {
+                } else if (e.keyCode == 13) { // enter
                     this.handleSelect();
+                } else if (e.keyCode == 46) { // delete
+                    this.searchWord = "";
                 } else {
                     setTimeout(() => {
                         this.getSearchList();
@@ -82,34 +85,36 @@
             },
             getSearchList() {
                 let word = this.searchWord.trim();
-                if (word) {
-                    let list = [],
-                        isMatch = false;
-                    appConfig.pre_actions.forEach(item => {
-                        if (isMatch) {
-                            return;
-                        }
-                        item.keywords.forEach(keyword => {
-                            if (!isMatch && new RegExp("^" + keyword + " ").test(this.searchWord)) {
-                                isMatch = true;
-                                list.push({
-                                    name: item.name,
-                                    url: item.url,
-                                    openBrower: true,
-                                    keyword
-                                })
-                                this.activeIndex = 0;
-                            }
-                        })
-                    })
-                    if (!isMatch) {
-                        list = this.startApp.filter(v => {
-                            v.app = true;
-                            return new RegExp(word, "gi").test(v.name);
-                        })
-                    }
-                    this.searchResultList = list;
+                if (!word) {
+                    return;
                 }
+                let list = [],
+                    isMatch = false;
+                appConfig.pre_actions.forEach(item => {
+                    if (isMatch) {
+                        return;
+                    }
+                    item.keywords.forEach(keyword => {
+                        if (!isMatch && new RegExp("^" + keyword + " ").test(this.searchWord)) {
+                            isMatch = true;
+                            list.push({
+                                name: item.name,
+                                url: item.url,
+                                openBrower: true,
+                                keyword
+                            })
+                            this.activeIndex = 0;
+                        }
+                    })
+                })
+                if (!isMatch) {
+                    list = this.startApp.filter(v => {
+                        v.app = true;
+                        return new RegExp(word, "gi").test(v.name);
+                    })
+                }
+                this.searchResultList = list;
+
             },
             fixPointerPosition() {
                 this.$refs.sInput.blur();
@@ -118,18 +123,20 @@
                 }, 17);
             },
             handleSelect() {
-                let act = this.activeSearchItem;
-
+                let act = this.activeSearchItem || {};
                 if (act.router) { // 打开新页面
                     console.log('ipcRenderer send vue-router');
                     ipcRenderer.send("vue-router", {
                         router: act.router
                     })
                 } else if (act.app) { // 打开文件
-                    spawn(act.path);
+                    let appProcess = spawn(act.path);
+                    appProcess.on("error", function (err) {
+                        alert("无法执行" + act.path)
+                    })
                 } else if (act.openBrower) { // 打开浏览器搜索
-                    let url = act.url + encodeURIComponent(this.searchWord.replace(new RegExp("^" + act.keyword + "\s*"),
-                        ""));
+                    let query = this.searchWord.replace(new RegExp("^" + act.keyword + "\\s*"), "")
+                    let url = act.url + encodeURIComponent(query);
                     this.open(url)
                 }
             }
@@ -137,7 +144,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     #wrapper {
         width: 100%;
     }
@@ -160,6 +167,7 @@
     }
 
     .search-li {
+        cursor: pointer;
         overflow: hidden;
         line-height: 47px;
         background: rgb(41, 40, 40);
@@ -173,7 +181,10 @@
     }
 
     .active-li {
-        color: #000;
-        background: #ccc;
+        background: #bf7777;
+    }
+
+    .active-li .s-word {
+        color: #fff;
     }
 </style>
