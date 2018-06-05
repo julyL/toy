@@ -1,0 +1,24 @@
+{
+  "startApp": [
+    {
+      "date": "2018-06-05 14:06:53",
+      "name": "sublime_text",
+      "path": "C:\\Users\\Administrator\\Desktop\\FE\\self\\前端开发工具\\Sublime Text 2017-6-13\\Sublime Text 3\\sublime_text.exe"
+    },
+    {
+      "time": "2018-06-05 14:06:29",
+      "name": "toy",
+      "path": "C:\\Users\\Administrator\\Desktop\\toy"
+    },
+    {
+      "time": "2018-06-05 11:06:05",
+      "name": "sh",
+      "path": "D:\\用户目录\\我的图片\\Shadowsocks-4.0.7\\Shadowsocks.exe"
+    },
+    {
+      "time": "2018-06-05 14:06:32",
+      "name": "cerebro",
+      "path": "C:\\Users\\Administrator\\Desktop\\cerebro"
+    }
+  ]
+}

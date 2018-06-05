@@ -14,7 +14,6 @@
         remote,
         ipcRenderer
     } = require('electron');
-    import $ from 'jquery';
 
     export default {
         name: 'search',
@@ -41,6 +40,11 @@
                 })
             }
         },
+        computed: {
+            activeSearchItem() {
+                return this.searchResultList[this.activeIndex];
+            }
+        },
         methods: {
             open(link) {
                 this.$electron.shell.openExternal(link)
@@ -54,7 +58,7 @@
                     this.fixPointerPosition();
                     this.activeIndex = (this.activeIndex + 1) % len;
                 } else if (e.keyCode == 13) {
-                    //    
+                    this.dealSelect();
                 } else {
                     this.getSearchList();
                 }
@@ -62,7 +66,10 @@
             getSearchList() {
                 setTimeout(() => {
                     if (this.searchWord.trim()) {
-                        let list = [];
+                        let list = [{
+                            name: "添加快速启动",
+                            router: "quickStart"
+                        }];
                         for (var i = 0; i <= parseInt(Math.random() * 10); i++) {
                             list.push({
                                 name: "随机--" + i
@@ -77,6 +84,14 @@
                 setTimeout(() => {
                     this.$refs.sInput.focus();
                 }, 17);
+            },
+            dealSelect() {
+                if (this.activeSearchItem.router) {
+                    console.log('ipcRenderer send vue-router');
+                    ipcRenderer.send("vue-router", {
+                        router: this.activeSearchItem.router
+                    })
+                }
             }
         }
     }

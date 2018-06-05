@@ -8,9 +8,10 @@
   export default {
     name: 'my-toy'
   }
-  </script>
+  document.addEventListener('dragover', event => event.preventDefault());
+  document.addEventListener('drop', event => event.preventDefault());
+</script>
 
 <style>
-    @import './assets/scss/reset.scss';
- 
+  @import './assets/scss/reset.scss';
 </style>

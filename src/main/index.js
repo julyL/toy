@@ -35,7 +35,7 @@ function createWindow() {
 
   if (config.DEBUG) {
     mainWindow.webContents.openDevTools({
-      detach: true
+      mode: "right"
     });
   }
 
@@ -49,6 +49,12 @@ function createWindow() {
 app.on('ready', function () {
   createWindow(); // 初始化窗口
   setShortCut(); // 设置快捷键
+
+  //测试代码
+  // linkRouter(null, {   
+  //   router: "quickStart"
+  // });
+
 })
 
 app.on('window-all-closed', () => {
@@ -75,3 +81,28 @@ emitter.on("switchVisible", function () {
 ipcMain.on("resize", function (event, size) {
   mainWindow.setSize(size.width, size.height)
 })
+
+ipcMain.on('vue-router', linkRouter)
+
+function linkRouter(event, data) {
+  const modalPath = process.env.NODE_ENV === 'development' ?
+    `http://localhost:9080/#/${data.router}` :
+    `file://${__dirname}/index.html#${data.router}`
+  let win = new BrowserWindow({
+    width: data.width || 1000,
+    height: data.height || 900,
+    webPreferences: {
+      webSecurity: false
+    }
+  })
+  win.webContents.openDevTools({
+    mode: "right"
+  });
+  if (!data.show) {
+    emitter.emit("switchVisible");
+  }
+  win.on('close', function () {
+    win = null
+  })
+  win.loadURL(modalPath)
+}

@@ -11,6 +11,11 @@ export default new Router({
       component: require('@/components/searchInput').default
     },
     {
+      path: '/quickStart',
+      name: 'quickStart',
+      component: require('@/components/quickStart').default
+    },
+    {
       path: '*',
       redirect: '/'
     }
