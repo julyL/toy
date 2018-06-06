@@ -8,12 +8,12 @@ export default new Router({
     {
       path: '/',
       name: 'search',
-      component: require('@/components/searchInput').default
+      component: require('@/router/searchInput').default
     },
     {
       path: '/quickStart',
       name: 'quickStart',
-      component: require('@/components/quickStart').default
+      component: require('@/router/quickStart').default
     },
     {
       path: '*',
