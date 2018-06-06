@@ -51,9 +51,9 @@ app.on('ready', function () {
   setShortCut(); // 设置快捷键
 
   //测试代码
-  linkRouter(null, {   
-    router: "desktop"
-  });
+  // linkRouter(null, {   
+  //   router: "desktop"
+  // });
 
 })
 
@@ -85,6 +85,7 @@ ipcMain.on("resize", function (event, size) {
 ipcMain.on('vue-router', linkRouter)
 
 function linkRouter(event, data) {
+  data.router = data.router.replace(/^\//,"");
   const modalPath = process.env.NODE_ENV === 'development' ?
     `http://localhost:9080/#/${data.router}` :
     `file://${__dirname}/index.html#${data.router}`

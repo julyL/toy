@@ -2,7 +2,7 @@
     <div id="wrapper">
         <input type="text" placeholder="Search" @keydown="handleKeydown($event)" id="search" v-model="searchWord" ref="sInput" autofocus>
         <div id="search-list">
-            <div class="search-li" v-for="(item,index) in searchResultList" :class="index==activeIndex?'active-li':''" :key="index" @click="handleSelect">
+            <div class="search-li" v-for="(item,index) in searchResultList" :class="index==activeIndex?'active-li':''" :key="index" @click="handleSelect(index)">
                 <div class="s-word">{{item.name}}</div>
             </div>
         </div>
@@ -66,7 +66,6 @@
             },
             handleKeydown(e) {
                 let len = this.searchResultList.length;
-                console.log(e.keyCode);
                 if (e.keyCode == 38) { // up
                     this.fixPointerPosition();
                     this.activeIndex = (this.activeIndex - 1 + len) % len;
@@ -78,18 +77,23 @@
                 } else if (e.keyCode == 46) { // delete
                     this.searchWord = "";
                 } else {
-                    setTimeout(() => {
+                    this.$nextTick(() => {
                         this.getSearchList();
-                    }, 0);
+                    });
                 }
             },
             getSearchList() {
                 let word = this.searchWord.trim();
+                console.log(22,word);
                 if (!word) {
+                    this.list = this.getListByMatchKeywords(word);
                     return;
                 }
+
                 let list = [],
                     isMatch = false;
+
+                // 判断是否匹配前置字符
                 appConfig.pre_actions.forEach(item => {
                     if (isMatch) {
                         return;
@@ -107,14 +111,35 @@
                         }
                     })
                 })
+
+                //  判断是否匹配快速启动
                 if (!isMatch) {
                     list = this.startApp.filter(v => {
                         v.app = true;
                         return new RegExp(word, "gi").test(v.name);
                     })
                 }
+                let filterList = this.getListByMatchKeywords(word);
+                list = filterList.concat(list);
+
                 this.searchResultList = list;
 
+            },
+            getListByMatchKeywords(keyword) {
+                let list = [];
+                appConfig.features.forEach(item => {
+                    let isMatch = false;
+                    item.keywords.forEach(v => {
+                        if (new RegExp("^" + v, 'gi').test(keyword) && !isMatch) {
+                            list.push({
+                                name: item.name,
+                                router: item.router
+                            })
+                            isMatch = true;
+                        }
+                    })
+                })
+                return list;
             },
             fixPointerPosition() {
                 this.$refs.sInput.blur();
@@ -122,8 +147,10 @@
                     this.$refs.sInput.focus();
                 }, 17);
             },
-            handleSelect() {
+            handleSelect(index) {
+                this.activeIndex = index;
                 let act = this.activeSearchItem || {};
+                console.log(act);
                 if (act.router) { // 打开新页面
                     console.log('ipcRenderer send vue-router');
                     ipcRenderer.send("vue-router", {

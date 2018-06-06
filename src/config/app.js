@@ -7,7 +7,23 @@ module.exports = {
     features: [{
         name: "添加快速启动",
         keywords: ["quickStart", 'qs'],
-        router: "quickStart"
+        router: "/quickStart"
+    }, {
+        name: "切换桌面模式",
+        keywords: ["d", 'desktop'],
+        router: "/desktop"
+    }, {
+        name: "编码转换",
+        keywords: ["encode"],
+        router: "/desktop/encode"
+    }, {
+        name: "json格式化",
+        keywords: ['jsformat'],
+        router: "/desktop/jsonformat"
+    }, {
+        name: "生成二维码",
+        keywords: ["qrcode"],
+        router: "/desktop/qrcode"
     }],
     pre_actions: [{
         name: "Search in Baidu",
