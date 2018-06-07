@@ -4,6 +4,9 @@
 
 */
 module.exports = {
+    staticServer:{
+        port: 3456
+    },
     features: [{
         name: "添加快速启动",
         keywords: ["quickStart", 'qs'],

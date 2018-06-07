@@ -51,9 +51,9 @@ app.on('ready', function () {
   setShortCut(); // 设置快捷键
 
   //测试代码
-  // linkRouter(null, {   
-  //   router: "desktop"
-  // });
+  linkRouter(null, {   
+    router: "desktop/staticServer"
+  });
 
 })
 

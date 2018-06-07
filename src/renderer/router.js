@@ -21,7 +21,7 @@ export default new Router({
       children: [{
         path: 'staticServer',
         name: 'staticServer',
-        component: require('@/router/staticServer').default,
+        component: require('@/router/staticServer/staticServer').default,
       }, {
         path: 'minifyimg',
         name: 'minifyimg',
