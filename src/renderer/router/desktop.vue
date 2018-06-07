@@ -125,6 +125,7 @@
     .goback {
         cursor: pointer;
         position: absolute;
+        z-index: 99;
         top: -1px;
         right: -1px;
         color: #757982;
