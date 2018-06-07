@@ -1,8 +1,16 @@
     import emitter from "../../main/emitter";
+    const fs = require("fs");
     const path = require("path");
     const lowdb = require('lowdb');
     const FileSync = require('lowdb/adapters/FileSync');
-    const adapter = new FileSync(path.resolve(__dirname, '../../config/db.json'));
+
+    let db_path = path.resolve(__dirname, '../../config/db.json');
+    if (!fs.existsSync(db_path)) {
+        fs.writeFileSync(db_path, "")
+    }
+
+
+    const adapter = new FileSync(db_path);
     const db = lowdb(adapter);
 
     db.defaults({
