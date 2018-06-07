@@ -2,9 +2,8 @@
     <div id="wrapper">
         <input type="text" placeholder="Search" @keydown="handleKeydown($event)" id="search" v-model="searchWord" ref="sInput" autofocus>
         <div id="search-list">
-            <div class="search-li" v-for="(item,index) in searchResultList" :class="index==activeIndex?'active-li':''" :key="index" @click="handleSelect(index)">
-                <div class="s-word">{{item.name}}</div>
-            </div>
+            <compontent :is="getComponent(data.type)" v-for="(data,index) in searchResultList" :class="index==activeIndex?'active-li':''"
+                :key="index" @clickHandle="handleSelect" :data="data" :index="index"></compontent>
         </div>
     </div>
 </template>
@@ -19,6 +18,17 @@
     } = require("child_process");
     import emitter from "../../main/emitter";
     import appConfig from '../../config/app';
+    import searchLi from '../components/searchLi.vue';
+    import fileLi from '../components/fileLi.vue';
+    import defaultLi from '../components/defaultLi.vue';
+
+    function isMatchKeyword(word, matchKeyword) {
+        if (word.length > matchKeyword.length) {
+            return new RegExp('^' + matchKeyword, 'gi').test(word)
+        } else {
+            return new RegExp('^' + word, 'gi').test(matchKeyword)
+        }
+    }
 
     export default {
         name: 'search',
@@ -60,51 +70,68 @@
                 return this.searchResultList[this.activeIndex];
             }
         },
+        components: {
+            searchLi,
+            fileLi,
+            defaultLi
+        },
         methods: {
             open(link) {
                 this.$electron.shell.openExternal(link)
             },
             handleKeydown(e) {
+                console.log(e.keyCode);
                 let len = this.searchResultList.length;
-                if (e.keyCode == 38) { // up
-                    this.fixPointerPosition();
-                    this.activeIndex = (this.activeIndex - 1 + len) % len;
-                } else if (e.keyCode == 40) { // down
-                    this.fixPointerPosition();
-                    this.activeIndex = (this.activeIndex + 1) % len;
-                } else if (e.keyCode == 13) { // enter
-                    this.handleSelect();
-                } else if (e.keyCode == 46) { // delete
-                    this.searchWord = "";
-                } else {
-                    this.$nextTick(() => {
-                        this.getSearchList();
-                    });
+
+                switch (e.keyCode) {
+                    case 38: // up
+                        this.fixPointerPosition();
+                        this.activeIndex = (this.activeIndex - 1 + len) % len;
+                        break;
+
+                    case 40: // down
+                        this.fixPointerPosition();
+                        this.activeIndex = (this.activeIndex + 1) % len;
+                        break;
+
+                    case 46: // delete
+                        this.activeIndex = (this.activeIndex - 1 + len) % len;
+                        break;
+
+                    case 13: // enter                      
+                        this.fixPointerPosition();
+                        this.handleSelect();
+                        break;
+
+                    default:
+                        this.$nextTick(() => {
+                            this.getListByKeywords();
+                        });
+                        break;
                 }
             },
-            getSearchList() {
+            getListByKeywords() {
                 let word = this.searchWord.trim();
-                console.log(22,word);
+                console.log('word', word);
                 if (!word) {
-                    this.list = this.getListByMatchKeywords(word);
+                    this.list = this.getFeatureList(word);
                     return;
                 }
 
                 let list = [],
                     isMatch = false;
 
-                // 判断是否匹配前置字符
-                appConfig.pre_actions.forEach(item => {
-                    if (isMatch) {
-                        return;
-                    }
+                // 判断是否匹配搜索的前置字符
+                appConfig.searchs.forEach(item => {
                     item.keywords.forEach(keyword => {
-                        if (!isMatch && new RegExp("^" + keyword + " ").test(this.searchWord)) {
+                        if (!isMatch && isMatchKeyword(keyword, this.searchWord)) {
                             isMatch = true;
                             list.push({
                                 name: item.name,
                                 url: item.url,
-                                openBrower: true,
+                                type: "search",
+                                query: this.searchWord.replace(new RegExp("^" + keyword +
+                                    "\\s*"), ""),
                                 keyword
                             })
                             this.activeIndex = 0;
@@ -112,28 +139,28 @@
                     })
                 })
 
-                //  判断是否匹配快速启动
-                if (!isMatch) {
-                    list = this.startApp.filter(v => {
-                        v.app = true;
-                        return new RegExp(word, "gi").test(v.name);
-                    })
-                }
-                let filterList = this.getListByMatchKeywords(word);
+                //  判断是否匹配已经添加的路径
+                list = this.startApp.filter(v => {
+                    v.type = "file";
+                    v.query = this.searchWord;
+                    return new RegExp(word, "gi").test(v.name);
+                })
+                let filterList = this.getFeatureList(word);
                 list = filterList.concat(list);
 
                 this.searchResultList = list;
 
             },
-            getListByMatchKeywords(keyword) {
+            getFeatureList(keyword) {
                 let list = [];
                 appConfig.features.forEach(item => {
                     let isMatch = false;
                     item.keywords.forEach(v => {
-                        if (new RegExp("^" + v, 'gi').test(keyword) && !isMatch) {
+                        if (!isMatch && isMatchKeyword(v, keyword)) {
                             list.push({
                                 name: item.name,
-                                router: item.router
+                                router: item.router,
+                                type: "feature"
                             })
                             isMatch = true;
                         }
@@ -148,23 +175,30 @@
                 }, 17);
             },
             handleSelect(index) {
-                this.activeIndex = index;
+                this.activeIndex = index || 0;
                 let act = this.activeSearchItem || {};
-                console.log(act);
-                if (act.router) { // 打开新页面
-                    console.log('ipcRenderer send vue-router');
+                if (act.type == "feature") { // 打开新页面
                     ipcRenderer.send("vue-router", {
                         router: act.router
                     })
-                } else if (act.app) { // 打开文件
+                } else if (act.type == "file") { // 打开文件
                     let appProcess = spawn(act.path);
                     appProcess.on("error", function (err) {
                         alert("无法执行" + act.path)
                     })
-                } else if (act.openBrower) { // 打开浏览器搜索
+                } else if (act.type == "search") { // 打开浏览器搜索
                     let query = this.searchWord.replace(new RegExp("^" + act.keyword + "\\s*"), "")
                     let url = act.url + encodeURIComponent(query);
                     this.open(url)
+                }
+            },
+            getComponent(type) {
+                if (type == 'search') {
+                    return 'searchLi';
+                } else if (type == 'file') {
+                    return 'fileLi';
+                } else {
+                    return 'defaultLi';
                 }
             }
         }
@@ -189,29 +223,7 @@
     }
 
     #search-list {
-        max-height: 315px;
+        max-height: 329px;
         overflow: auto;
-    }
-
-    .search-li {
-        cursor: pointer;
-        overflow: hidden;
-        line-height: 47px;
-        background: rgb(41, 40, 40);
-        padding: 0 7px;
-        color: #fff;
-        font-size: 17px;
-    }
-
-    .s-word {
-        float: left;
-    }
-
-    .active-li {
-        background: #bf7777;
-    }
-
-    .active-li .s-word {
-        color: #fff;
     }
 </style>

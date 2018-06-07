@@ -51,9 +51,9 @@ app.on('ready', function () {
   setShortCut(); // 设置快捷键
 
   //测试代码
-  linkRouter(null, {   
-    router: "desktop/staticServer"
-  });
+  // linkRouter(null, {   
+  //   router: "desktop/staticServer"
+  // });
 
 })
 
@@ -96,9 +96,9 @@ function linkRouter(event, data) {
       webSecurity: false
     }
   })
-  win.webContents.openDevTools({
-    mode: "right"
-  });
+  // win.webContents.openDevTools({
+  //   mode: "right"
+  // });
   if (!data.show) {
     emitter.emit("switchVisible");
   }
