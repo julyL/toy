@@ -3,7 +3,8 @@ import {
   BrowserWindow,
   ipcMain,
   Tray,
-  Menu
+  Menu,
+  nativeImage
 } from 'electron'
 const path = require("path");
 import config from '../config/ui.js';
@@ -27,13 +28,13 @@ function createWindow() {
   /**
    * Initial window options
    */
-  let iconPath = path.resolve(__dirname, "../../build/icons/app-icon.png");
+  let iconPath = nativeImage.createFromPath(path.resolve(__static, "./icons/app-icon.png"));
   mainWindow = new BrowserWindow({
     icon: iconPath,
     width: config.WIN_WIDTH,
     height: config.WIN_HEIGHT,
     frame: false,
-    // resizable: false
+    resizable: false
     // useContentSize: true,
   })
 
