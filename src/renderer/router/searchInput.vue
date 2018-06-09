@@ -119,14 +119,16 @@
                 }
 
                 let list = [],
-                    isMatch = false;
+                    searchList = [],
+                    startList = [];
 
                 // 判断是否匹配搜索的前置字符
                 appConfig.searchs.forEach(item => {
+                    let isMatch = false;
                     item.keywords.forEach(keyword => {
-                        if (!isMatch && isMatchKeyword(keyword, this.searchWord)) {
+                        if (!isMatch && new RegExp('^' + keyword + "\\s+", 'gi').test(this.searchWord)) {
                             isMatch = true;
-                            list.push({
+                            searchList.push({
                                 name: item.name,
                                 url: item.url,
                                 type: "search",
@@ -140,13 +142,14 @@
                 })
 
                 //  判断是否匹配已经添加的路径
-                list = this.startApp.filter(v => {
+                startList = this.startApp.filter(v => {
                     v.type = "file";
                     v.query = this.searchWord;
                     return new RegExp(word, "gi").test(v.name);
-                })
+                });
+                list = [].concat(searchList, startList);
                 let filterList = this.getFeatureList(word);
-                list = filterList.concat(list);
+                list = list.concat(filterList);
 
                 this.searchResultList = list;
 
