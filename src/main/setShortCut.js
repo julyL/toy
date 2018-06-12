@@ -5,11 +5,11 @@ import {
 import emitter from './emitter'
 
 export default function setShrotCut() {
-    const ret = globalShortcut.register('Alt+q', () => {
+    globalShortcut.register('Alt+d', () => {
+        emitter.emit("switchVisible");
+    })
+    globalShortcut.register('Super+d', () => {
         emitter.emit("switchVisible");
     })
 
-    if (!ret) {
-        console.log('registration failed')
-    } 
 }

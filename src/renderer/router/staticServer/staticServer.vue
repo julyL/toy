@@ -1,5 +1,5 @@
 <template>
-    <div class="staticServer">
+    <div class="page-staticServer">
         <div class="el-upload-dragger" id="holder">
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">拖入文件夹</div>
@@ -76,28 +76,30 @@
 </script>
 
 
-<style scoped>
-    .staticServer {}
-
-    #holder {
-        margin: 50px auto 20px;
-        min-width: 360px;
-        width: 70%;
-        padding-top: 35px;
-        height: 241px;
-    }
-
-    .preview {
-        text-align: center;
-    }
-
-    .qrcode {
-        width: 200px;
-        display: block;
-        margin: 0 auto 20px;
-    }
-
-    .link {
-        cursor: pointer;
+<style scoped lang='scss'>
+    .page-staticServer {
+        #holder {
+            margin: 50px auto 20px;
+            min-width: 360px;
+            width: 70%;
+            padding-top: 35px;
+            height: 241px;
+        }
+        .preview {
+            text-align: center;
+            color: #6c6f73;
+        }
+        .qrcode {
+            width: 350px;
+            display: block;
+            margin: 0 auto 20px;
+        }
+        .link {
+            cursor: pointer;
+            color: #428bca;
+            text-decoration: underline;
+            font-size: 20px;
+            margin-left: 7px;
+        }
     }
 </style>

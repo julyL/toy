@@ -1,5 +1,5 @@
 <template>
-    <div id="container">
+    <div class="page-desktop">
         <div id="view-main" :style="{backgroundImage:'url('+backgroundImage +')'}" v-show="$route.name=='desktop'">
             <div id="btn-list">
                 <linkbtn v-for="link in routerLink" :link="link" :key="link.router"></linkbtn>
@@ -116,157 +116,127 @@
     }
 </script>
 
-<style scoped>
-    #container {
+<style scoped lang='scss'>
+    .page-desktop {
         width: 100%;
         height: 100%;
-    }
-
-    .goback {
-        cursor: pointer;
-        position: absolute;
-        z-index: 99;
-        top: -1px;
-        right: -1px;
-        color: #757982;
-        font-weight: bold;
-        font-size: 13px;
-        background: #fff;
-        padding: 5px 8px;
-        border-radius: 0 0 0 5px;
-        border: 1px solid #d2d5da;
-    }
-
-    #view-main {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        background-size: cover;
-        background-attachment: fixed;
-        background-position: center center;
-        -webkit-transform: translate(0);
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-
-    #btn-list {
-        overflow: hidden;
-        margin-top: 40px;
-        min-width: 760px;
-        left: 50%;
-        top: 45%;
-        z-index: 10;
-        overflow: hidden;
-        position: absolute;
-        transform: translate(-50%, -50%);
-    }
-
-
-    #page-wrap {
-        display: none;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 22;
-        background: #fff;
-    }
-
-    #page-wrap-close {
-        color: #9a9393;
-        cursor: pointer;
-        position: absolute;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        width: 40px;
-        height: 40px;
-        background: #e4e1e1;
-        line-height: 40px;
-        text-align: center;
-        font-size: 22px;
-    }
-
-    #page-wrap-close:hover {
-        background: #eae9e9;
-    }
-
-    #page-template-container {
-        height: 100%;
-        background: #fff;
-    }
-
-    #random-bg {
-        cursor: pointer;
-        position: absolute;
-        width: 40px;
-        height: 60px;
-        bottom: 0;
-        right: 20px;
-        z-index: 10;
-    }
-
-    #fengche {
-        width: 40px;
-        z-index: 3;
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-
-    #random-line {
-        width: 5px;
-        height: 30px;
-        position: absolute;
-        bottom: 0;
-        left: 18px;
-        background-color: #fefefe;
-        z-index: 2;
-    }
-
-    .xuanzhuan {
-        -webkit-animation: xuanzhuan 0.8s linear infinite;
-    }
-
-    @-webkit-keyframes xuanzhuan {
-        0% {
-            -webkit-transform: rotate(0);
+        #view-main {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center center;
+            -webkit-transform: translate(0);
+            position: absolute;
+            top: 0;
+            left: 0;
         }
-        25% {
-            -webkit-transform: rotate(-90deg);
+        #btn-list {
+            overflow: hidden;
+            margin-top: 40px;
+            min-width: 760px;
+            left: 50%;
+            top: 45%;
+            z-index: 10;
+            overflow: hidden;
+            position: absolute;
+            transform: translate(-50%, -50%);
         }
-        50% {
-            -webkit-transform: rotate(-180deg);
+        #page-wrap {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 22;
+            background: #fff;
         }
-        75% {
-            -webkit-transform: rotate(-270deg);
+        #page-wrap-close {
+            color: #9a9393;
+            cursor: pointer;
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: #e4e1e1;
+            line-height: 40px;
+            text-align: center;
+            font-size: 22px;
         }
-        100% {
-            -webkit-transform: rotate(-360deg);
+        #page-wrap-close:hover {
+            background: #eae9e9;
         }
-    }
-
-    #random-bg:hover .canpreview {
-        visibility: visible;
-        left: -111px;
-        opacity: 1;
-    }
-
-    #preview-img-w {
-        position: absolute;
-        top: -120px;
-        left: -120px;
-        border: 1px solid #fff;
-        opacity: .5;
-        transition: all .3s;
-    }
-
-    .preview-img {
-        width: 150px;
-        height: 100px;
-        display: block;
+        #page-template-container {
+            height: 100%;
+            background: #fff;
+        }
+        #random-bg {
+            cursor: pointer;
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            bottom: 0;
+            right: 20px;
+            z-index: 10;
+        }
+        #fengche {
+            width: 40px;
+            z-index: 3;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #random-line {
+            width: 5px;
+            height: 30px;
+            position: absolute;
+            bottom: 0;
+            left: 18px;
+            background-color: #fefefe;
+            z-index: 2;
+        }
+        .xuanzhuan {
+            -webkit-animation: xuanzhuan 0.8s linear infinite;
+        }
+        @-webkit-keyframes xuanzhuan {
+            0% {
+                -webkit-transform: rotate(0);
+            }
+            25% {
+                -webkit-transform: rotate(-90deg);
+            }
+            50% {
+                -webkit-transform: rotate(-180deg);
+            }
+            75% {
+                -webkit-transform: rotate(-270deg);
+            }
+            100% {
+                -webkit-transform: rotate(-360deg);
+            }
+        }
+        #random-bg:hover .canpreview {
+            visibility: visible;
+            left: -111px;
+            opacity: 1;
+        }
+        #preview-img-w {
+            position: absolute;
+            top: -120px;
+            left: -120px;
+            border: 1px solid #fff;
+            opacity: .5;
+            transition: all .3s;
+        }
+        .preview-img {
+            width: 150px;
+            height: 100px;
+            display: block;
+        }
     }
 </style>

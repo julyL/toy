@@ -11,13 +11,16 @@ import config from '../config/ui.js';
 
 import emitter from './emitter';
 import setShortCut from './setShortCut';
+import {
+  getTrayMenu
+} from './setMenu';
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
-if (process.env.NODE_ENV !== 'development') {
-  global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
-}
+// if (process.env.NODE_ENV !== 'development') {
+global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+// }
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development' ?
@@ -39,13 +42,7 @@ function createWindow() {
   })
 
   let appIcon = new Tray(iconPath);
-  var trayMenuTemplate = [{
-    label: '退出',
-    click: function () {
-      app.quit();
-    }
-  }];
-  const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
+  const contextMenu = getTrayMenu();
   appIcon.setToolTip('create by julyL!');
   appIcon.setContextMenu(contextMenu);
 
@@ -112,9 +109,9 @@ function linkRouter(event, data) {
       webSecurity: false
     }
   })
-  // win.webContents.openDevTools({
-  //   mode: "right"
-  // });
+  win.webContents.openDevTools({
+    mode: "right"
+  });
   if (!data.show) {
     emitter.emit("switchVisible");
   }

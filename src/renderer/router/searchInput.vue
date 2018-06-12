@@ -1,26 +1,26 @@
 <template>
-    <div id="wrapper">
+    <div class="page-search">
         <input type="text" placeholder="Search" @keydown="handleKeydown($event)" id="search" v-model="searchWord" ref="sInput" autofocus>
         <div id="search-list">
             <compontent :is="getComponent(data.type)" v-for="(data,index) in searchResultList" :class="index==activeIndex?'active-li':''"
-                :key="index" @clickHandle="handleSelect" :data="data" :index="index"></compontent>
+                :key="index" @clickHandle="handleSelect(index)" :data="data" :index="index"></compontent>
         </div>
     </div>
 </template>
 
 <script>
     let {
+        shell,
         remote,
         ipcRenderer
     } = require('electron');
-    const {
-        spawn
-    } = require("child_process");
     import emitter from "../../main/emitter";
     import appConfig from '../../config/app';
     import searchLi from '../components/searchLi.vue';
     import fileLi from '../components/fileLi.vue';
     import defaultLi from '../components/defaultLi.vue';
+    const path = require("path");
+    const fs = require("fs");
 
     function isMatchKeyword(word, matchKeyword) {
         if (word.length > matchKeyword.length) {
@@ -33,11 +33,23 @@
     export default {
         name: 'search',
         created() {
+            let self = this,
+                dbpath = path.resolve(__static, './db/db.json');
             emitter.emit("db", {
                 action: "getStartApp",
                 cb: (data) => {
-                    this.startApp = data;
+                    self.startApp = data;
                 }
+            })
+            fs.watchFile(dbpath, () => {
+                console.log('get');
+                emitter.emit("db", {
+                    action: "getStartApp",
+                    cb: (data) => {
+                        console.log(data);
+                        self.startApp = data;
+                    }
+                })
             })
         },
         mounted() {
@@ -59,8 +71,8 @@
                 this.activeIndex = 0;
                 this.$nextTick(v => {
                     ipcRenderer.send("resize", {
-                        width: $("#wrapper").width(),
-                        height: $("#wrapper").height(),
+                        width: $('.page-search').width(),
+                        height: $('.page-search').height(),
                     })
                 })
             }
@@ -178,17 +190,18 @@
                 }, 17);
             },
             handleSelect(index) {
-                this.activeIndex = index || 0;
+                if (index !== undefined) {
+                    this.activeIndex = index;
+                }
                 let act = this.activeSearchItem || {};
                 if (act.type == "feature") { // 打开新页面
                     ipcRenderer.send("vue-router", {
                         router: act.router
                     })
                 } else if (act.type == "file") { // 打开文件
-                    let appProcess = spawn(act.path);
-                    appProcess.on("error", function (err) {
+                    let appProcess = shell.openItem(act.path, function (err) {
                         alert("无法执行" + act.path)
-                    })
+                    });
                 } else if (act.type == "search") { // 打开浏览器搜索
                     let query = this.searchWord.replace(new RegExp("^" + act.keyword + "\\s*"), "")
                     let url = act.url + encodeURIComponent(query);
@@ -208,25 +221,23 @@
     }
 </script>
 
-<style scoped>
-    #wrapper {
+<style scoped lang='scss'>
+    .page-search {
         width: 100%;
-    }
-
-    #search {
-        border: none;
-        outline: none;
-        width: 100%;
-        height: 47px;
-        line-height: 47px;
-        font-size: 22px;
-        padding: 0 7px;
-        color: #4ff2f8;
-        background: rgb(45, 45, 45);
-    }
-
-    #search-list {
-        max-height: 329px;
-        overflow: auto;
+        #search {
+            border: none;
+            outline: none;
+            width: 100%;
+            height: 47px;
+            line-height: 47px;
+            font-size: 22px;
+            padding: 0 7px;
+            color: #4ff2f8;
+            background: rgb(45, 45, 45);
+        }
+        #search-list {
+            max-height: 329px;
+            overflow: auto;
+        }
     }
 </style>

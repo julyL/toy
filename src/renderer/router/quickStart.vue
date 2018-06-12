@@ -1,5 +1,5 @@
 <template>
-    <div class="upload-wrap">
+    <div class="page-quickStart wrapper">
         <el-upload class="upload" action="" :http-request="handleUpload" drag>
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">将可执行文件拖到此处</div>
@@ -36,14 +36,6 @@
     export default {
         created() {
             this.getTabaleData();
-        },
-        mounted() {
-            var $upload = $(".upload");
-            $upload.on("drop", e => {
-                for (let f of e.originalEvent.dataTransfer.files) {
-                    this.insertTableData(f.path);
-                }
-            })
         },
         data() {
             return {
@@ -116,22 +108,22 @@
 <style>
 </style>
 
-<style scoped>
-    .upload-wrap {
+<style scoped lang='scss'>
+    .page-quickStart {
         padding: 40px;
         text-align: center;
-    }
-
-    .upload {
-        padding: 40px;
-    }
-
-    .el-table {
-        margin: 0 auto;
-        width: 800px;
-    }
-
-    .el-upload {
-        margin: 0 auto;
+        .upload {
+            padding: 40px;
+        }
+        .el-table {
+            margin: 0 auto;
+            width: 800px;
+        }
+        .el-upload {
+            margin: 0 auto;
+        }
+        .el-upload__input {
+            display: none!important;
+        }
     }
 </style>

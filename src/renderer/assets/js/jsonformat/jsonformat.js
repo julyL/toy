@@ -788,13 +788,6 @@ var JsonFormatEntrance = (function() {
       document.head.appendChild(o);
     }
     i = document.getElementById("formattingMsg");
-    if (!i) {
-      i = document.createElement("pre");
-      i.id = "formattingMsg";
-      i.innerHTML =
-        '<svg id="spinner" width="16" height="16" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" version="1.1"><path d="M 150,0 a 150,150 0 0,1 106.066,256.066 l -35.355,-35.355 a -100,-100 0 0,0 -70.711,-170.711 z" fill="#3d7fe6"></path></svg> 格式化中...';
-      document.body.appendChild(i);
-    }
     k.postMessage({ type: "SENDING TEXT", text: y, length: y.length });
     a(JSON.parse(y));
   };

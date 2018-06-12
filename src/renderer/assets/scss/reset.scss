@@ -28,3 +28,7 @@ a {
 ::-webkit-scrollbar-track {
     background: transparent;
 }
+
+textarea {
+    resize: none;
+}

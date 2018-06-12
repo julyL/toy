@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="page-minifyimg">
         <header>
             <div id="title">图片压缩裁剪工具</div>
         </header>
@@ -100,8 +100,8 @@
     export default {
         mounted() {
             require.ensure([], (require) => {
-                require("../assets/js/minifyimg/js/cropper.js");
-                require("../assets/js/minifyimg/js/index.js");
+                require("../assets/js/minifyimg/cropper.js");
+                require("../assets/js/minifyimg/index.js");
             }, "");
 
             var imgurl,
@@ -168,7 +168,7 @@
 </script>
 
 
-<style scoped>
-    @import '../assets/js/minifyimg/css/index.css';
-    @import '../assets/js/minifyimg/css/cropper.min.css';
+<style scoped lang='scss'>
+    @import '../assets/js/minifyimg/index.scss';
+    @import '../assets/js/minifyimg/cropper.min.css';
 </style>
