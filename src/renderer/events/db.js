@@ -21,10 +21,10 @@
     emitter.on("db", (data) => {
         let result;
         switch (data.action) {
-            case "setStartApp":
+            case "setStartAppList":
                 db.set("startApp", data.data).write();
                 break;
-            case "getStartApp":
+            case "getStartAppList":
                 result = db.get("startApp").value();
             default:
                 break;

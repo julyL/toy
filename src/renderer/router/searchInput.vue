@@ -9,48 +9,28 @@
 </template>
 
 <script>
-    let {
+    const {
         shell,
         remote,
         ipcRenderer
     } = require('electron');
-    import emitter from "../../main/emitter";
-    import appConfig from '../../config/app';
     import searchLi from '../components/searchLi.vue';
     import fileLi from '../components/fileLi.vue';
     import defaultLi from '../components/defaultLi.vue';
+    import bookmarkLi from '../components/bookmarkLi.vue';
     const path = require("path");
     const fs = require("fs");
-
-    function isMatchKeyword(word, matchKeyword) {
-        if (word.length > matchKeyword.length) {
-            return new RegExp('^' + matchKeyword, 'gi').test(word)
-        } else {
-            return new RegExp('^' + word, 'gi').test(matchKeyword)
-        }
-    }
+    import {
+        getFeatureListByword,
+        getWebSearchListByword,
+        getQuickStartListByword,
+        getBookmarkListByword
+    } from '../../util/getSearchResult'
 
     export default {
         name: 'search',
         created() {
-            let self = this,
-                dbpath = path.resolve(__static, './db/db.json');
-            emitter.emit("db", {
-                action: "getStartApp",
-                cb: (data) => {
-                    self.startApp = data;
-                }
-            })
-            fs.watchFile(dbpath, () => {
-                console.log('get');
-                emitter.emit("db", {
-                    action: "getStartApp",
-                    cb: (data) => {
-                        console.log(data);
-                        self.startApp = data;
-                    }
-                })
-            })
+
         },
         mounted() {
             ipcRenderer.on("focusSearchInput", () => {
@@ -62,8 +42,7 @@
                 searchWord: "",
                 activeIndex: 0,
                 searchResultList: [],
-                action: "",
-                startApp: []
+                action: ""
             }
         },
         watch: {
@@ -85,25 +64,26 @@
         components: {
             searchLi,
             fileLi,
-            defaultLi
+            defaultLi,
+            bookmarkLi
         },
         methods: {
             open(link) {
                 this.$electron.shell.openExternal(link)
             },
             handleKeydown(e) {
-                console.log(e.keyCode);
                 let len = this.searchResultList.length;
-
                 switch (e.keyCode) {
                     case 38: // up
                         this.fixPointerPosition();
                         this.activeIndex = (this.activeIndex - 1 + len) % len;
+                        this.adjustScrollTop();
                         break;
 
                     case 40: // down
                         this.fixPointerPosition();
                         this.activeIndex = (this.activeIndex + 1) % len;
+                        this.adjustScrollTop();
                         break;
 
                     case 46: // delete
@@ -126,62 +106,48 @@
                 let word = this.searchWord.trim();
                 console.log('word', word);
                 if (!word) {
-                    this.list = this.getFeatureList(word);
+                    this.list = getFeatureListByword(word);
                     return;
                 }
 
                 let list = [],
-                    searchList = [],
-                    startList = [];
+                    webList = [],
+                    startList = [],
+                    featureList = [];
 
-                // 判断是否匹配搜索的前置字符
-                appConfig.searchs.forEach(item => {
-                    let isMatch = false;
-                    item.keywords.forEach(keyword => {
-                        if (!isMatch && new RegExp('^' + keyword + "\\s+", 'gi').test(this.searchWord)) {
-                            isMatch = true;
-                            searchList.push({
-                                name: item.name,
-                                url: item.url,
-                                type: "search",
-                                query: this.searchWord.replace(new RegExp("^" + keyword +
-                                    "\\s*"), ""),
-                                keyword
-                            })
-                            this.activeIndex = 0;
-                        }
-                    })
+                // web搜索列表
+                webList = getWebSearchListByword(this.searchWord);
+                if (webList.length > 0) {
+                    this.activeIndex = 0;
+                }
+                //  快速启动列表
+                startList = getQuickStartListByword(this.searchWord);
+                //  功能列表
+                featureList = getFeatureListByword(this.searchWord);
+                //  书签列表
+                getBookmarkListByword(this.searchWord).then(data => {
+                    list = [].concat(webList, startList, featureList, data);
+
+                    this.searchResultList = list;
                 })
-
-                //  判断是否匹配已经添加的路径
-                startList = this.startApp.filter(v => {
-                    v.type = "file";
-                    v.query = this.searchWord;
-                    return new RegExp(word, "gi").test(v.name);
-                });
-                list = [].concat(searchList, startList);
-                let filterList = this.getFeatureList(word);
-                list = list.concat(filterList);
-
-                this.searchResultList = list;
-
             },
-            getFeatureList(keyword) {
-                let list = [];
-                appConfig.features.forEach(item => {
-                    let isMatch = false;
-                    item.keywords.forEach(v => {
-                        if (!isMatch && isMatchKeyword(v, keyword)) {
-                            list.push({
-                                name: item.name,
-                                router: item.router,
-                                type: "feature"
-                            })
-                            isMatch = true;
-                        }
-                    })
+            adjustScrollTop() {
+                let listShowHeight = 329, // 列表显示高度
+                    inputHeight = $("#search").height();
+                this.$nextTick(() => {
+                    let activeOffsetTop = $('.active-li').offset().top,
+                        scrollTop = $("#search-list").scrollTop(),
+                        h1 = scrollTop + inputHeight - activeOffsetTop;
+                    if (h1 > 0) {
+                        $("#search-list").scrollTop(scrollTop - h1);
+                    }
+                    let heightNeedToShowall = activeOffsetTop + $(".active-li").height(),
+                        h2 = heightNeedToShowall - listShowHeight - inputHeight - scrollTop;
+                    if (h2 > 0) {
+                        $("#search-list").scrollTop(scrollTop + h2);
+                    }
+                    console.log(h1, h2, scrollTop, activeOffsetTop);
                 })
-                return list;
             },
             fixPointerPosition() {
                 this.$refs.sInput.blur();
@@ -202,7 +168,7 @@
                     let appProcess = shell.openItem(act.path, function (err) {
                         alert("无法执行" + act.path)
                     });
-                } else if (act.type == "search") { // 打开浏览器搜索
+                } else if (act.type == "search" || act.type == 'bookmark') { // 打开浏览器搜索
                     let query = this.searchWord.replace(new RegExp("^" + act.keyword + "\\s*"), "")
                     let url = act.url + encodeURIComponent(query);
                     this.open(url)
@@ -213,6 +179,8 @@
                     return 'searchLi';
                 } else if (type == 'file') {
                     return 'fileLi';
+                } else if (type == 'bookmark') {
+                    return 'bookmarkLi';
                 } else {
                     return 'defaultLi';
                 }
@@ -222,8 +190,13 @@
 </script>
 
 <style scoped lang='scss'>
+    ::-webkit-scrollbar-thumb {
+        background-color: #545454;
+    }
+
     .page-search {
         width: 100%;
+        background: #292828;
         #search {
             border: none;
             outline: none;

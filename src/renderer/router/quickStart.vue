@@ -49,7 +49,7 @@
             tableData: {
                 handler: function (val) {
                     emitter.emit("db", {
-                        action: "setStartApp",
+                        action: "setStartAppList",
                         data: val
                     })
                 },
@@ -92,7 +92,6 @@
                 emitter.emit("db", {
                     action: "getStartApp",
                     cb: (data) => {
-                        console.log(111, data);
                         this.tableData = data;
                     }
                 })
@@ -123,7 +122,7 @@
             margin: 0 auto;
         }
         .el-upload__input {
-            display: none!important;
+            display: none !important;
         }
     }
 </style>
