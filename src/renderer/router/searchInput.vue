@@ -2,7 +2,7 @@
     <div class="page-search">
         <input type="text" placeholder="Search" @keydown="handleKeydown($event)" id="search" v-model="searchWord" ref="sInput" autofocus>
         <div id="search-list">
-            <compontent :is="getComponent(data.type)" v-for="(data,index) in searchResultList" :class="index==activeIndex?'active-li':''"
+            <compontent :is="getComponent(data)" v-for="(data,index) in searchResultList" :class="index==activeIndex?'active-li':''"
                 :key="index" @clickHandle="handleSelect(index)" :data="data" :index="index"></compontent>
         </div>
     </div>
@@ -20,6 +20,7 @@
     import bookmarkLi from '../components/bookmarkLi.vue';
     const path = require("path");
     const fs = require("fs");
+    const dialog = remote.dialog;
     import {
         getFeatureListByword,
         getWebSearchListByword,
@@ -110,6 +111,7 @@
                     this.list = getFeatureListByword(word);
                     return;
                 }
+
                 // web搜索列表
                 webList = getWebSearchListByword(this.searchWord);
                 if (webList.length > 0) {
@@ -121,8 +123,10 @@
                 featureList = getFeatureListByword(this.searchWord);
                 //  书签列表
                 getBookmarkListByword(this.searchWord).then(data => {
-                    list = [].concat(webList, startList, featureList, data);
+                    list = [].concat(list, webList, startList, featureList, data);
                     this.searchResultList = list;
+                }, (err) => {
+                    alert(err)
                 })
             },
             adjustScrollTop() {
@@ -155,9 +159,23 @@
                 }
                 let act = this.activeSearchItem || {};
                 if (act.type == "feature") { // 打开新页面
-                    ipcRenderer.send("vue-router", {
-                        router: act.router
-                    })
+                    if (act.router) {
+                        ipcRenderer.send("vue-router", {
+                            router: act.router
+                        })
+                    } else if (act.view == 'uploadBookmark') {
+                        dialog.showOpenDialog({
+                            properties: ['openFile']
+                        }, function (files) {
+                            let filepath = files[0];
+                            if (!/.*\.html/.test(filepath)) {
+                                alert("书签仅支持html格式")
+                            } else {
+                                fs.createReadStream(filepath).pipe(fs.createWriteStream(path.resolve(__static,
+                                    './bookmark.html')))
+                            }
+                        })
+                    }
                 } else if (act.type == "file") { // 打开文件
                     let appProcess = shell.openItem(act.path, function (err) {
                         alert("无法执行" + act.path)
@@ -170,13 +188,16 @@
                     this.open(act.url);
                 }
             },
-            getComponent(type) {
+            getComponent(v) {
+                let type = v.type;
                 if (type == 'search') {
                     return 'searchLi';
                 } else if (type == 'file') {
                     return 'fileLi';
                 } else if (type == 'bookmark') {
                     return 'bookmarkLi';
+                } else if (type == 'uploadBookmark') {
+                    return 'uploadBookmark';
                 } else {
                     return 'defaultLi';
                 }

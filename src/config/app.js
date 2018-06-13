@@ -8,6 +8,11 @@ module.exports = {
         port: 3456
     },
     features: [{
+        name: "书签导入",
+        keywords: ['f','b', "bm", 'bookmark'],
+        router: "",
+        view: "uploadBookmark"
+    }, {
         name: "添加快速启动",
         keywords: ['f', "quickStart", 'qs'],
         router: "/quickStart"

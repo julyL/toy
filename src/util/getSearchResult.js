@@ -1,13 +1,16 @@
  import appConfig from '../config/app';
  import getBookmarkList from './getBookmarkList';
  import emitter from "../main/emitter";
+ import {
+     Object
+ } from 'core-js';
  const fs = require("fs");
  const path = require("path");
 
  function isMatchKeyword(word, matchKeyword, preReg, nextReg) {
      preReg = preReg || '';
      nextReg = nextReg || '';
-     if(!word||!matchKeyword){
+     if (!word || !matchKeyword) {
          return;
      }
      if (word.length > matchKeyword.length) {
@@ -24,11 +27,9 @@
          let isMatch = false;
          item.keywords.forEach(v => {
              if (!isMatch && isMatchKeyword(v, searchKeyword, '^')) {
-                 list.push({
-                     name: item.name,
-                     router: item.router,
-                     type: "feature"
-                 })
+                 list.push(Object.assign(item, {
+                     type: "feature",
+                 }))
                  isMatch = true;
              }
          })
@@ -44,14 +45,12 @@
          item.keywords.forEach(keyword => {
              if (!isMatch && new RegExp('^' + keyword + "\\s+", 'gi').test(searchKeyword)) {
                  isMatch = true;
-                 searchList.push({
-                     name: item.name,
-                     url: item.url,
+                 searchList.push(Object.assign(item, {
                      type: "search",
                      query: searchKeyword.replace(new RegExp("^" + keyword +
                          "\\s*"), ""),
                      keyword
-                 })
+                 }))
              }
          })
      })
@@ -96,16 +95,16 @@
              if (isMatchKeyword(v.title, searchKeyword)) {
                  isMatchTitle = true;
              }
-             return {
+             return Object.assign(v, {
                  type: "bookmark",
-                 url: v.url,
-                 title: v.title,
                  isMatchUrl: isMatchUrl,
                  isMatchTitle: isMatchTitle,
                  matchWord: searchKeyword
-             }
+             })
          }).filter(v => {
              return v.isMatchUrl || v.isMatchTitle;
          })
+     }, () => {
+         return []
      })
  };

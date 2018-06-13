@@ -48,7 +48,7 @@ function createWindow() {
 
   if (config.DEBUG) {
     mainWindow.webContents.openDevTools({
-      detach: true
+      mode: "detach"
     });
   }
 
@@ -109,9 +109,11 @@ function linkRouter(event, data) {
       webSecurity: false
     }
   })
-  win.webContents.openDevTools({
-    mode: "right"
-  });
+  if (config.DEBUG) {
+    mainWindow.webContents.openDevTools({
+      mode: "right"
+    });
+  }
   if (!data.show) {
     emitter.emit("switchVisible");
   }
