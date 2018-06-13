@@ -33,7 +33,7 @@
 
     .open-bookmark {
         float: left;
-        margin: 0 10px 0 15px;
+        margin: 0 13px 0 10px;
         font-weight: bold;
         font-size: 15px;
         color: #fff;

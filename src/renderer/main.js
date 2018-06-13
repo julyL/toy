@@ -6,7 +6,12 @@ import router from './router.js'
 import $ from 'jquery'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-import './events/index'
+import './events/index';
+import logger from '../util/logger'
+window.onerror = function (err, msg) {
+  logger(err + ':' + msg)
+  console.log(msg);
+}
 
 Vue.use(ElementUI);
 
@@ -16,7 +21,9 @@ Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
-  components: { App },
+  components: {
+    App
+  },
   router,
   template: '<App/>'
 }).$mount('#app')

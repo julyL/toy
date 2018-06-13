@@ -27,6 +27,10 @@
     .highlight {
         color: #eaea0e;
     }
+
+    .active-li .highlight {
+        font-size: 18px;
+    }
 </style>
 <style scoped>
     .search-li {
@@ -35,13 +39,15 @@
         line-height: 47px;
         background: rgb(41, 40, 40);
         padding: 0 7px;
-        color: #588994;
+        color: #00f1ff;
         font-size: 17px;
     }
 
     .open-word {
         float: left;
         margin-right: 10px;
+        color: #fff;
+        font-weight: bold;
     }
 
     .s-word {
@@ -52,12 +58,8 @@
         background: #bf7777;
     }
 
-    .active-li .open-word {
-        font-weight: bold;
-        color: #fff;
-    }
-
     .active-li .s-word {
-        color: #fff;
+        color: #00f1ff;
+        font-size: 18px;
     }
 </style>

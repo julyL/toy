@@ -1,6 +1,7 @@
 <template>
     <div class="page-search">
-        <input type="text" placeholder="Search" @keydown="handleKeydown($event)" id="search" v-model="searchWord" ref="sInput" autofocus>
+        <input type="text" placeholder="Search" @keydown="handleKeydown($event)" id="search" v-model="searchWord" ref="sInput" autofocus
+            style="-webkit-app-region: drag">
         <div id="search-list">
             <compontent :is="getComponent(data)" v-for="(data,index) in searchResultList" :class="index==activeIndex?'active-li':''"
                 :key="index" @clickHandle="handleSelect(index)" :data="data" :index="index"></compontent>
@@ -108,7 +109,7 @@
                     featureList = [];
 
                 if (!word) {
-                    this.list = getFeatureListByword(word);
+                    this.searchResultList = getFeatureListByword(word);
                     return;
                 }
 

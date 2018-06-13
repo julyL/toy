@@ -22,7 +22,7 @@
         line-height: 47px;
         background: rgb(41, 40, 40);
         padding: 0 7px;
-        color: #588994;
+        color: #00f1ff;
         font-size: 17px;
     }
 
@@ -44,6 +44,7 @@
 
 
     .active-li .s-word {
-        color: #fff;
+        color: yellow;
+        font-weight: bold;
     }
 </style>

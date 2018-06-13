@@ -3,12 +3,10 @@ import {
   BrowserWindow,
   ipcMain,
   Tray,
-  Menu,
-  nativeImage
+  Menu
 } from 'electron'
 const path = require("path");
 import config from '../config/ui.js';
-
 import emitter from './emitter';
 import setShortCut from './setShortCut';
 import {
@@ -21,6 +19,7 @@ import {
 // if (process.env.NODE_ENV !== 'development') {
 global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 // }
+const logger = require('../util/logger.js');
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development' ?
@@ -31,7 +30,7 @@ function createWindow() {
   /**
    * Initial window options
    */
-  let iconPath = nativeImage.createFromPath(path.resolve(__static, "./icons/app-icon.png"));
+  let iconPath = path.resolve(__static, "./icons/app-icon.png");
   mainWindow = new BrowserWindow({
     icon: iconPath,
     width: config.WIN_WIDTH,
@@ -62,12 +61,6 @@ function createWindow() {
 app.on('ready', function () {
   createWindow(); // 初始化窗口
   setShortCut(); // 设置快捷键
-
-  //测试代码
-  // linkRouter(null, {   
-  //   router: "desktop/staticServer"
-  // });
-
 })
 
 app.on('window-all-closed', () => {
@@ -110,7 +103,7 @@ function linkRouter(event, data) {
     }
   })
   if (config.DEBUG) {
-    mainWindow.webContents.openDevTools({
+    win.webContents.openDevTools({
       mode: "right"
     });
   }
