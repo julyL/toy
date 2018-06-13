@@ -54,6 +54,9 @@
                         height: $('.page-search').height(),
                     })
                 })
+            },
+            searchWord() {
+                this.getListByKeywords();
             }
         },
         computed: {
@@ -94,27 +97,19 @@
                         this.fixPointerPosition();
                         this.handleSelect();
                         break;
-
-                    default:
-                        this.$nextTick(() => {
-                            this.getListByKeywords();
-                        });
-                        break;
                 }
             },
             getListByKeywords() {
-                let word = this.searchWord.trim();
-                console.log('word', word);
-                if (!word) {
-                    this.list = getFeatureListByword(word);
-                    return;
-                }
-
-                let list = [],
+                let word = this.searchWord.trim(),
+                    list = [],
                     webList = [],
                     startList = [],
                     featureList = [];
 
+                if (!word) {
+                    this.list = getFeatureListByword(word);
+                    return;
+                }
                 // web搜索列表
                 webList = getWebSearchListByword(this.searchWord);
                 if (webList.length > 0) {
@@ -127,26 +122,25 @@
                 //  书签列表
                 getBookmarkListByword(this.searchWord).then(data => {
                     list = [].concat(webList, startList, featureList, data);
-
                     this.searchResultList = list;
                 })
             },
             adjustScrollTop() {
-                let listShowHeight = 329, // 列表显示高度
-                    inputHeight = $("#search").height();
+                let listHeight = $("#search-list").height(), // 列表显示高度
+                    inputHeight = $("#search").height(),
+                    activeLiHeight = $(".active-li").height();
                 this.$nextTick(() => {
-                    let activeOffsetTop = $('.active-li').offset().top,
-                        scrollTop = $("#search-list").scrollTop(),
+                    let scrollTop = $("#search-list").scrollTop(),
+                        activeOffsetTop = $('.active-li').offset().top + scrollTop,
                         h1 = scrollTop + inputHeight - activeOffsetTop;
                     if (h1 > 0) {
-                        $("#search-list").scrollTop(scrollTop - h1);
+                        $("#search-list").scrollTop(activeOffsetTop - inputHeight);
                     }
-                    let heightNeedToShowall = activeOffsetTop + $(".active-li").height(),
-                        h2 = heightNeedToShowall - listShowHeight - inputHeight - scrollTop;
+                    let heightNeedToShowall = activeOffsetTop + activeLiHeight,
+                        h2 = heightNeedToShowall - listHeight - inputHeight - scrollTop;
                     if (h2 > 0) {
-                        $("#search-list").scrollTop(scrollTop + h2);
+                        $("#search-list").scrollTop(heightNeedToShowall - listHeight - inputHeight);
                     }
-                    console.log(h1, h2, scrollTop, activeOffsetTop);
                 })
             },
             fixPointerPosition() {
@@ -168,10 +162,12 @@
                     let appProcess = shell.openItem(act.path, function (err) {
                         alert("无法执行" + act.path)
                     });
-                } else if (act.type == "search" || act.type == 'bookmark') { // 打开浏览器搜索
+                } else if (act.type == "search") { // 打开浏览器搜索
                     let query = this.searchWord.replace(new RegExp("^" + act.keyword + "\\s*"), "")
                     let url = act.url + encodeURIComponent(query);
                     this.open(url)
+                } else if (act.type == 'bookmark') { // 打开书签
+                    this.open(act.url);
                 }
             },
             getComponent(type) {
