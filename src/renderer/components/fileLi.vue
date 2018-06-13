@@ -32,7 +32,7 @@
         font-size: 18px;
     }
 </style>
-<style scoped>
+<style scoped lang="scss">
     .search-li {
         cursor: pointer;
         overflow: hidden;
@@ -47,7 +47,6 @@
         float: left;
         margin-right: 10px;
         color: #fff;
-        font-weight: bold;
     }
 
     .s-word {
@@ -58,8 +57,10 @@
         background: #bf7777;
     }
 
-    .active-li .s-word {
-        color: #00f1ff;
-        font-size: 18px;
+    .active-li {
+        .s-word {
+            color: #00f1ff;
+            font-size: 18px;
+        }
     }
 </style>

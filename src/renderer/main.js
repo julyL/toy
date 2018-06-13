@@ -10,7 +10,7 @@ import './events/index';
 import logger from '../util/logger'
 window.onerror = function (err, msg) {
   logger(err + ':' + msg)
-  console.log(msg);
+  console.log('error' + msg);
 }
 
 Vue.use(ElementUI);

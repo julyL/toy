@@ -45,7 +45,7 @@
          item.keywords.forEach(keyword => {
              if (!isMatch && new RegExp('^' + keyword + "\\s+", 'gi').test(searchKeyword)) {
                  isMatch = true;
-                 searchList.push(Object.assign(item, {
+                 list.push(Object.assign(item, {
                      type: "search",
                      query: searchKeyword.replace(new RegExp("^" + keyword +
                          "\\s*"), ""),

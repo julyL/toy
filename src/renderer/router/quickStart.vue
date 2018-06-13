@@ -82,24 +82,18 @@
                 this.activeColumn = index;
                 this.inputName = row.name;
                 this.inputPath = row.path;
-                console.log(index, row);
             },
             handleDelete(index, row) {
                 this.tableData.splice(index, 1);
-                console.log(index, row);
             },
             getTabaleData() {
                 emitter.emit("db", {
-                    action: "getStartApp",
+                    action: "getStartAppList",
                     cb: (data) => {
                         this.tableData = data;
                     }
                 })
             }
-        },
-        components: {
-
-
         }
     }
 </script>

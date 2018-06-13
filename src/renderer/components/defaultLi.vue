@@ -36,6 +36,7 @@
 
     .s-word {
         float: left;
+        transition: all .1s;
     }
 
     .active-li {
@@ -45,6 +46,6 @@
 
     .active-li .s-word {
         color: yellow;
-        font-weight: bold;
+        font-size: 16px;
     }
 </style>

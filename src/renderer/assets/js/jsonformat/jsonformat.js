@@ -680,7 +680,6 @@ var JsonFormatEntrance = (function() {
         s.parentNode.appendChild(z);
         break;
       case "FORMATTED":
-        i.style.display = "";
         s.innerHTML = C[1];
         w = +new Date();
         break;

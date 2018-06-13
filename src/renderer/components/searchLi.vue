@@ -23,20 +23,21 @@
         line-height: 47px;
         background: rgb(41, 40, 40);
         padding: 0 7px;
-        color:#588994;
+        color: #588994;
         font-size: 17px;
     }
 
     .search-word {
         float: left;
         margin-left: 10px;
-        font-weight: bold;
+        /* font-weight: bold; */
         font-size: 18px;
-        color: #fff;
+        color: yellow;
     }
 
     .s-word {
         float: left;
+        transition: all .1s;
     }
 
     .active-li {
