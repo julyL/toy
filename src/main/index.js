@@ -21,10 +21,27 @@ global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\
 // }
 const logger = require('../util/logger.js');
 
-let mainWindow
+let mainWindow, loadingScreen;
 const winURL = process.env.NODE_ENV === 'development' ?
   `http://localhost:9080` :
-  `file://${__dirname}/index.html`
+  `file://${__dirname}/index.html`;
+
+
+function createLoadingScreen() {
+  loadingScreen = new BrowserWindow({
+    width: 500,
+    height: 500,
+    resizable: false,
+    frame: false,
+    parent: mainWindow,
+    transparent: true
+  });
+  loadingScreen.loadURL(path.resolve(__static, './loading.html'));
+  loadingScreen.on('closed', () => loadingScreen = null);
+  loadingScreen.webContents.on('did-finish-load', () => {
+    loadingScreen.show();
+  });
+}
 
 function createWindow() {
   /**
@@ -36,8 +53,9 @@ function createWindow() {
     width: config.WIN_WIDTH,
     height: config.WIN_HEIGHT,
     frame: false,
-    resizable: false
-    // useContentSize: true,
+    resizable: false,
+    show: false,
+    backgroundColor: "#292828"
   })
 
   let appIcon = new Tray(iconPath);
@@ -51,6 +69,13 @@ function createWindow() {
     });
   }
 
+  mainWindow.once('ready-to-show', () => {
+    if (loadingScreen) {
+      loadingScreen.close();
+    }
+    mainWindow.show()
+  })
+
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
@@ -59,9 +84,21 @@ function createWindow() {
 }
 
 app.on('ready', function () {
+  createLoadingScreen(); // 加载动画
   createWindow(); // 初始化窗口
   setShortCut(); // 设置快捷键
 })
+
+const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore()
+    mainWindow.focus()
+  }
+})
+if (isSecondInstance) {
+  app.quit();
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -94,22 +131,32 @@ function linkRouter(event, data) {
   data.router = data.router.replace(/^\//, "");
   const modalPath = process.env.NODE_ENV === 'development' ?
     `http://localhost:9080/#/${data.router}` :
-    `file://${__dirname}/index.html#${data.router}`
+    `file://${__dirname}/index.html#${data.router}`;
+
   let win = new BrowserWindow({
     width: data.width || 1000,
     height: data.height || 900,
     webPreferences: {
       webSecurity: false
-    }
+    },
+    parent: mainWindow,
+    show: false,
   })
+
+  win.once('ready-to-show', () => {
+    win.show()
+  })
+
   if (config.DEBUG) {
     win.webContents.openDevTools({
       mode: "right"
     });
   }
+
   if (!data.show) {
     emitter.emit("switchVisible");
   }
+
   win.on('close', function () {
     win = null
   })
