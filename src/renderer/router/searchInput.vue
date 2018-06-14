@@ -131,9 +131,9 @@
                 })
             },
             adjustScrollTop() {
-                let listHeight = $("#search-list").height(), // 列表显示高度
-                    inputHeight = $("#search").height(),
-                    activeLiHeight = $(".active-li").height();
+                let listHeight = $("#search-list").outerHeight(), // 列表显示高度
+                    inputHeight = $("#search").outerHeight(),
+                    activeLiHeight = $(".active-li").outerHeight();
                 this.$nextTick(() => {
                     let scrollTop = $("#search-list").scrollTop(),
                         activeOffsetTop = $('.active-li').offset().top + scrollTop,
