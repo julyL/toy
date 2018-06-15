@@ -10,8 +10,8 @@ import config from '../config/ui.js';
 import emitter from './emitter';
 import setShortCut from './setShortCut';
 import {
-  getTrayMenu
-} from './setMenu';
+  setTray
+} from './setTray';
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -29,8 +29,8 @@ const winURL = process.env.NODE_ENV === 'development' ?
 
 function createLoadingScreen() {
   loadingScreen = new BrowserWindow({
-    width: 500,
-    height: 500,
+    width: 150,
+    height: 100,
     resizable: false,
     frame: false,
     parent: mainWindow,
@@ -42,6 +42,7 @@ function createLoadingScreen() {
     loadingScreen.show();
   });
 }
+var tray = null;
 
 function createWindow() {
   /**
@@ -58,10 +59,8 @@ function createWindow() {
     backgroundColor: "#292828"
   })
 
-  let appIcon = new Tray(iconPath);
-  const contextMenu = getTrayMenu();
-  appIcon.setToolTip('create by julyL!');
-  appIcon.setContextMenu(contextMenu);
+  tray = new Tray(iconPath);
+  setTray(mainWindow, tray)
 
   if (config.DEBUG) {
     mainWindow.webContents.openDevTools({
@@ -76,11 +75,19 @@ function createWindow() {
     mainWindow.show()
   })
 
-  mainWindow.loadURL(winURL)
-
   mainWindow.on('closed', () => {
     mainWindow = null
-  })
+  });
+
+  mainWindow.on('close', function (event) {
+    if (!app.isQuiting) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+    return false;
+  });
+
+  mainWindow.loadURL(winURL)
 }
 
 app.on('ready', function () {
