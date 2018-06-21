@@ -8,11 +8,13 @@ import {
 const path = require("path");
 import config from '../config/ui.js';
 import emitter from '../util/emitter';
-import setShortCut from './setShortCut';
+import setShortcut from './setShortcut';
 import {
   setTray
 } from './setTray';
 import setLoading from './setLoading.js';
+import openWin from './openWin.js';
+import '../util/db.js';
 
 // static变量对应static文件夹
 global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
@@ -75,7 +77,7 @@ function createWindow() {
 app.on('ready', function () {
   loadingScreen = setLoading(); // 加载动画
   createWindow(); // 初始化窗口
-  setShortCut(); // 设置快捷键
+  setShortcut(); // 设置快捷键
 })
 
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
@@ -103,58 +105,31 @@ app.on('activate', () => {
   }
 })
 
-emitter.on("switchVisible", function () {
-  if (mainWindow.isVisible()) {
-    mainWindow.webContents.send("focusSearchInput")
-    mainWindow.hide();
-  } else {
-    mainWindow.show();
-  }
-})
+// ipcMain通信事件
+ipcMain.on('openWin', openWin);
 
 ipcMain.on("resize", function (event, size) {
   mainWindow.setSize(size.width, size.height)
+});
+
+ipcMain.on("setShortcut", function (event, data) {
+  setShortcut(data).then(() => {
+    event.sender.send("setShortcut:success", data)
+  }, (err) => {
+    event.sender.send("setShortcut:fail", {
+      msg: err
+    })
+  })
 })
 
-ipcMain.on('vue-router', linkRouter)
+// event绑定事件
+emitter.on("openWin", openWin);
 
-function linkRouter(event, data) {
-  data.router = data.router.replace(/^\//, "");
-  const modalPath = process.env.NODE_ENV === 'development' ?
-    `http://localhost:9080/#/${data.router}` :
-    `file://${__dirname}/index.html#${data.router}`;
-
-  let win = new BrowserWindow({
-    width: data.width || 1000,
-    height: data.height || 900,
-    webPreferences: {
-      webSecurity: false
-    },
-    parent: mainWindow,
-    show: false,
-  })
-
-  loadingScreen = setLoading();
-
-  win.once('ready-to-show', () => {
-    if (loadingScreen) {
-      loadingScreen.close();
-    }
-    win.show()
-  })
-
-  if (config.DEBUG) {
-    win.webContents.openDevTools({
-      mode: "right"
-    });
+emitter.on("switchVisible", function (visible) {
+  if (visible === false || mainWindow.isVisible()) {
+    mainWindow.hide();
+  } else {
+    mainWindow.show();
+    mainWindow.webContents.send("focusSearchInput");
   }
-
-  if (!data.show) {
-    emitter.emit("switchVisible");
-  }
-
-  win.on('close', function () {
-    win = null
-  })
-  win.loadURL(modalPath)
-}
+})

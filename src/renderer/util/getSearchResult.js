@@ -1,11 +1,15 @@
  import getBookmarkList from './getBookmarkList';
  import emitter from "_src/util/emitter";
- import {
-     Object
- } from 'core-js';
  const fs = require("fs");
  const path = require("path");
- const appConfig = require('_static/setting/app');
+ const configPath = path.resolve(__static, './db/db.json');
+ var appConfig = require('_static/db/db.json');
+
+ fs.watchFile(configPath, () => {
+     emitter.on("getAppSetting", (data) => {
+         appConfig = data;
+     })
+ });
 
  function isMatchKeyword(word, matchKeyword, preReg, nextReg) {
      preReg = preReg || '';
@@ -20,10 +24,10 @@
      }
  }
 
- // 匹配config/app.js中的features里的keywords字段
+ // 匹配config/app.js中的feature里的keywords字段
  export function getFeatureListByword(searchKeyword) {
      let list = [];
-     appConfig.features.forEach(item => {
+     appConfig.feature.forEach(item => {
          let isMatch = false;
          item.keywords.forEach(v => {
              if (!isMatch && isMatchKeyword(v, searchKeyword, '^')) {
@@ -40,7 +44,7 @@
  // 匹配搜索的前置字符(打开浏览器)
  export function getWebSearchListByword(searchKeyword) {
      let list = [];
-     appConfig.searchs.forEach(item => {
+     appConfig.search.forEach(item => {
          let isMatch = false;
          item.keywords.forEach(keyword => {
              if (!isMatch && new RegExp('^' + keyword + "\\s+", 'gi').test(searchKeyword)) {
@@ -58,24 +62,8 @@
  }
 
  // 匹配快速启动的列表
- let startAppList = [],
-     dbpath = path.resolve(__static, './setting/app.js');
- emitter.emit("quickStartApp", {
-     action: "get",
-     cb: (data) => {
-         startAppList = data;
-     }
- })
- fs.watchFile(dbpath, () => {
-     emitter.emit("quickStartApp", {
-         action: "get",
-         cb: (data) => {
-             startAppList = data;
-         }
-     })
- });
  export function getQuickStartListByword(searchKeyword) {
-     return startAppList.filter(v => {
+     return appConfig.quickStartApp.filter(v => {
          v.type = "file";
          v.query = searchKeyword;
          return new RegExp(searchKeyword.trim(), "gi").test(v.name);

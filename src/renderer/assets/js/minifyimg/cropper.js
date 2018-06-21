@@ -160,7 +160,7 @@
     minContainerWidth: 200,
     minContainerHeight: 100,
 
-    // Shortcuts of events
+    // shortcut of events
     ready: null,
     cropstart: null,
     cropmove: null,

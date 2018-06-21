@@ -1,12 +1,13 @@
 /*
-    features: 核心自带功能
+    feature: 核心自带功能
     pre_actions: 搜索前置符 
 */
 module.exports = {
   staticServer: {
     port: 3456
   },
-  features: [{
+  quickStartApp: [],
+  feature: [{
     name: "书签导入",
     keywords: ['f', 'b', "bm", 'bookmark'],
     router: "",
@@ -40,7 +41,7 @@ module.exports = {
     keywords: ['f', "static", 'server'],
     router: "/desktop/staticServer"
   }],
-  searchs: [{
+  search: [{
     name: "Search in GitHub",
     keywords: ["g", "gi", "github"],
     url: "https://github.com/search?q="
@@ -60,5 +61,9 @@ module.exports = {
     name: "打开百度地图",
     keywords: ["m", "map"],
     url: "http://map.baidu.com/?newmap=1&ie=utf-8&s=s%26wd%3D"
+  }],
+  shortcut: [{
+    name: "全局切换显示隐藏",
+    hotkey: "Alt+d"
   }]
 };

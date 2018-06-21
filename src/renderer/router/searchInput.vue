@@ -36,7 +36,10 @@
         },
         mounted() {
             ipcRenderer.on("focusSearchInput", () => {
-                this.fixPointerPosition()
+                // $nextTick内获取的this.$refs.sInput可能还是为undefined,所以设置一个100ms延迟
+                setTimeout(() => {
+                    this.fixPointerPosition()
+                }, 100);
             })
         },
         data() {
@@ -149,10 +152,15 @@
                 })
             },
             fixPointerPosition() {
-                this.$refs.sInput.blur();
-                setTimeout(() => {
-                    this.$refs.sInput.focus();
-                }, 17);
+                this.$nextTick(() => {
+                    console.log(this.$refs);
+                    if (this.$refs && this.$refs.sInput) {
+                        this.$refs.sInput.blur();
+                        setTimeout(() => {
+                            this.$refs.sInput.focus();
+                        }, 17);
+                    }
+                })
             },
             handleSelect(index) {
                 if (index !== undefined) {
@@ -161,7 +169,7 @@
                 let act = this.activeSearchItem || {};
                 if (act.type == "feature") { // 打开新页面
                     if (act.router) {
-                        ipcRenderer.send("vue-router", {
+                        ipcRenderer.send("openWin", {
                             router: act.router
                         })
                     } else if (act.view == 'uploadBookmark') {

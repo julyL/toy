@@ -10,6 +10,11 @@ export default new Router({
       component: require('@/router/searchInput').default
     },
     {
+      path: '/setting',
+      name: 'setting',
+      component: require('@/router/setting').default
+    },
+    {
       path: '/quickStart',
       name: 'quickStart',
       component: require('@/router/quickStart').default

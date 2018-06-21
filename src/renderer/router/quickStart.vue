@@ -48,8 +48,8 @@
         watch: {
             tableData: {
                 handler: function (val) {
-                    emitter.emit("quickStartApp", {
-                        action: "set",
+                    emitter.emit("setAppSetting", {
+                        type: "quickStartApp",
                         data: val
                     })
                 },
@@ -87,11 +87,8 @@
                 this.tableData.splice(index, 1);
             },
             getTabaleData() {
-                emitter.emit("quickStartApp", {
-                    action: "get",
-                    cb: (data) => {
-                        this.tableData = data;
-                    }
+                emitter.emit("getAppSetting", (data) => {
+                    this.tableData = data.quickStartApp;
                 })
             }
         }
