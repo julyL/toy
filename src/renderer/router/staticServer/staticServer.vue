@@ -16,7 +16,7 @@
     const ip = require('ip');
     const $ = require('jquery');
     const qrcode = require('qrcode');
-    import appConfig from '../../../config/app';
+    const path = require("path");
     const PORT = 3456;
 
     var myip = ip.address(),

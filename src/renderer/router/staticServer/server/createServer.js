@@ -37,12 +37,12 @@ export default function (config) {
         app.use(Static(config.filepath, {
             index: false
         }));
-        app.use(Static(path.resolve(__static, './server/static'), {
+        app.use(Static(path.resolve(__static, './pages/server/static'), {
             index: false
         }));
 
         render(app, {
-            root: path.join(__static, './server/view'),
+            root: path.join(__static, './pages/server/view'),
             layout: 'template',
             viewExt: 'html',
             cache: false,

@@ -2,7 +2,7 @@ const fs = require('fs'),
     path = require('path');
 
 var parse = require("bookmarks-parser");
-var bookmark_path = path.resolve(__static, './bookmark.html');
+var bookmark_path = path.resolve(__static, './pages/bookmark.html');
 
 function parseBookmark() {
     return new Promise((re, rj) => {

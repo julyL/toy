@@ -27,7 +27,7 @@
         getWebSearchListByword,
         getQuickStartListByword,
         getBookmarkListByword
-    } from '../../util/getSearchResult'
+    } from '../util/getSearchResult'
 
     export default {
         name: 'search',
@@ -173,7 +173,7 @@
                                 alert("书签仅支持html格式")
                             } else {
                                 fs.createReadStream(filepath).pipe(fs.createWriteStream(path.resolve(__static,
-                                    './bookmark.html')))
+                                    './pages/bookmark.html')))
                             }
                         })
                     }

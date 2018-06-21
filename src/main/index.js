@@ -7,18 +7,15 @@ import {
 } from 'electron'
 const path = require("path");
 import config from '../config/ui.js';
-import emitter from './emitter';
+import emitter from '../util/emitter';
 import setShortCut from './setShortCut';
 import {
   setTray
 } from './setTray';
-/**
- * Set `__static` path to static files in production
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
- */
-// if (process.env.NODE_ENV !== 'development') {
-global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
-// }
+import setLoading from './setLoading.js';
+
+// static变量对应static文件夹
+global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
 const logger = require('../util/logger.js');
 
 let mainWindow, loadingScreen;
@@ -27,28 +24,13 @@ const winURL = process.env.NODE_ENV === 'development' ?
   `file://${__dirname}/index.html`;
 
 
-function createLoadingScreen() {
-  loadingScreen = new BrowserWindow({
-    width: 150,
-    height: 100,
-    resizable: false,
-    frame: false,
-    parent: mainWindow,
-    transparent: true
-  });
-  loadingScreen.loadURL(path.resolve(__static, './loading.html'));
-  loadingScreen.on('closed', () => loadingScreen = null);
-  loadingScreen.webContents.on('did-finish-load', () => {
-    loadingScreen.show();
-  });
-}
 var tray = null;
 
 function createWindow() {
   /**
    * Initial window options
    */
-  let iconPath = path.resolve(__static, "./icons/app-icon.png");
+  let iconPath = path.resolve(__static, "./image/icons/app-icon.png");
   mainWindow = new BrowserWindow({
     icon: iconPath,
     width: config.WIN_WIDTH,
@@ -91,7 +73,7 @@ function createWindow() {
 }
 
 app.on('ready', function () {
-  createLoadingScreen(); // 加载动画
+  loadingScreen = setLoading(); // 加载动画
   createWindow(); // 初始化窗口
   setShortCut(); // 设置快捷键
 })
@@ -99,7 +81,9 @@ app.on('ready', function () {
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
   // Someone tried to run a second instance, we should focus our window.
   if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore()
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore()
+    }
     mainWindow.focus()
   }
 })
@@ -150,7 +134,12 @@ function linkRouter(event, data) {
     show: false,
   })
 
+  loadingScreen = setLoading();
+
   win.once('ready-to-show', () => {
+    if (loadingScreen) {
+      loadingScreen.close();
+    }
     win.show()
   })
 

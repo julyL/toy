@@ -6,7 +6,7 @@ import router from './router.js'
 import $ from 'jquery'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-import './events/index';
+import './util/db';
 import logger from '../util/logger'
 window.onerror = function (err, msg) {
   logger(err + ':' + msg)

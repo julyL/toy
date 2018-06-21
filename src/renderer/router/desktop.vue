@@ -24,7 +24,7 @@
         fetchImageList,
         getOriginImage
     } from '@/util/fetchImage';
-    import store from '../util/store';
+    import store from '_src/util/store';
     import defaultImg from '../assets/image/index.jpg';
 
     function loadImg(url) {

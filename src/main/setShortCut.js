@@ -2,7 +2,7 @@ import {
     globalShortcut
 } from 'electron';
 
-import emitter from './emitter'
+import emitter from '../util/emitter'
 
 export default function setShrotCut() {
     globalShortcut.register('Alt+d', () => {

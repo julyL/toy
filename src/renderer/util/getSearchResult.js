@@ -1,11 +1,11 @@
- import appConfig from '../config/app';
  import getBookmarkList from './getBookmarkList';
- import emitter from "../main/emitter";
+ import emitter from "_src/util/emitter";
  import {
      Object
  } from 'core-js';
  const fs = require("fs");
  const path = require("path");
+ const appConfig = require('_static/setting/app');
 
  function isMatchKeyword(word, matchKeyword, preReg, nextReg) {
      preReg = preReg || '';
@@ -59,16 +59,16 @@
 
  // 匹配快速启动的列表
  let startAppList = [],
-     dbpath = path.resolve(__static, './db/db.json');
- emitter.emit("db", {
-     action: "getStartAppList",
+     dbpath = path.resolve(__static, './setting/app.js');
+ emitter.emit("quickStartApp", {
+     action: "get",
      cb: (data) => {
          startAppList = data;
      }
  })
  fs.watchFile(dbpath, () => {
-     emitter.emit("db", {
-         action: "getStartAppList",
+     emitter.emit("quickStartApp", {
+         action: "get",
          cb: (data) => {
              startAppList = data;
          }

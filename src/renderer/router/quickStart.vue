@@ -31,7 +31,7 @@
 <script>
     const path = require("path");
     const dayjs = require("dayjs");
-    import emitter from "../../main/emitter";
+    import emitter from "_src/util/emitter";
 
     export default {
         created() {
@@ -48,8 +48,8 @@
         watch: {
             tableData: {
                 handler: function (val) {
-                    emitter.emit("db", {
-                        action: "setStartAppList",
+                    emitter.emit("quickStartApp", {
+                        action: "set",
                         data: val
                     })
                 },
@@ -87,8 +87,8 @@
                 this.tableData.splice(index, 1);
             },
             getTabaleData() {
-                emitter.emit("db", {
-                    action: "getStartAppList",
+                emitter.emit("quickStartApp", {
+                    action: "get",
                     cb: (data) => {
                         this.tableData = data;
                     }

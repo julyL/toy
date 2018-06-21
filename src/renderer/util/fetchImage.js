@@ -1,7 +1,7 @@
 const request = require("request");
 const cheerio = require("cheerio");
 const Q = require("jquery");
-const store = require("./store").default;
+const store = require("_src/util/store").default;
 const PageUrl = "https://alpha.wallhaven.cc/search?q=nature&search_image=&categories=110&purity=110&sorting=favorites&order=desc&page=",
   totalPages = 1600;
 
