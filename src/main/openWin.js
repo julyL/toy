@@ -18,6 +18,7 @@ export default function openWin(data) {
             webSecurity: false
         },
         show: false,
+        alwaysOnTop: true
     }
 
     let win = new BrowserWindow(Object.assign(options, data))
@@ -30,10 +31,11 @@ export default function openWin(data) {
         }
         win.show()
     })
+    //   mainWindow.webContents.openDevTools({
+    //     mode: "detach"
+    //   });
+
     emitter.emit("switchVisible", false)
-    win.webContents.openDevTools({
-        mode: "detach"
-    });
 
     win.on('close', function () {
         win = null

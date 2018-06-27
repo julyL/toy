@@ -43,7 +43,7 @@
                                 <span style="margin-left: 10px" v-else>{{ scope.row.url }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="快捷别名" width=198>
+                        <el-table-column label="快捷别名 (以,分隔)" width=198>
                             <template slot-scope="scope">
                                 <el-input v-model="searchKeywords" v-if="activeTypeIndex.search===scope.$index" size="small"></el-input>
                                 <span style="margin-left: 10px" v-else>{{ splitArray(scope.row.keywords) }}</span>
@@ -146,7 +146,6 @@
                 handler: function (val) {
                     emitter.emit("setAppSetting", {
                         type: "search",
-
                         data: val
                     })
                 },
@@ -156,7 +155,6 @@
                 handler: function (val) {
                     emitter.emit("setAppSetting", {
                         type: "feature",
-
                         data: val
                     })
                 },

@@ -6,7 +6,6 @@ import {
   Menu
 } from 'electron'
 const path = require("path");
-import config from '../config/ui.js';
 import emitter from '../util/emitter';
 import setShortcut from './setShortcut';
 import {
@@ -32,11 +31,11 @@ function createWindow() {
   /**
    * Initial window options
    */
-  let iconPath = path.resolve(__static, "./image/icons/app-icon.png");
+  let iconPath = path.join(__dirname, "../../build/icons/app-icon.png");
   mainWindow = new BrowserWindow({
     icon: iconPath,
-    width: config.WIN_WIDTH,
-    height: config.WIN_HEIGHT,
+    width: 700,
+    height: 47,
     frame: false,
     resizable: false,
     show: false,
@@ -46,11 +45,9 @@ function createWindow() {
   tray = new Tray(iconPath);
   setTray(mainWindow, tray)
 
-  if (config.DEBUG) {
-    mainWindow.webContents.openDevTools({
-      mode: "detach"
-    });
-  }
+  //   mainWindow.webContents.openDevTools({
+  //     mode: "detach"
+  //   });
 
   mainWindow.once('ready-to-show', () => {
     if (loadingScreen) {

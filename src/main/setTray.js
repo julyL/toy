@@ -8,11 +8,6 @@ import emitter from '../util/emitter';
 
 export function setTray(mainWindow, tray) {
     var trayMenuTemplate = [{
-            label: '显示',
-            click: function () {
-                mainWindow.show();
-            }
-        }, {
             label: '设置',
             click: function () {
                 emitter.emit('openWin', {

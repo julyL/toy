@@ -1,17 +1,18 @@
 <template>
     <div class="page-quickStart wrapper">
+        <div class="close" @click="closeWindow"></div>
         <el-upload class="upload" action="" :http-request="handleUpload" drag>
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">将可执行文件拖到此处</div>
         </el-upload>
-        <el-table :data="tableData" class="el-table" border max-height="600">
-            <el-table-column label="名称" width="150px" align="center">
+        <el-table :data="tableData" class="el-table" border max-height="500">
+            <el-table-column label="启动关键字" width="150px" align="center">
                 <template slot-scope="scope">
                     <el-input v-model="inputName" v-if="inputName&&activeColumn===scope.$index" size="small"></el-input>
                     <span style="margin-left: 10px" v-else>{{ scope.row.name }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="启动路径" width="450px" align="center">
+            <el-table-column label="本地路径" width="450px" align="center">
                 <template slot-scope="scope">
                     <el-input v-model="inputPath" v-if="inputPath&&activeColumn===scope.$index" size="small"></el-input>
                     <span style="margin-left: 10px" v-else>{{ scope.row.path }}</span>
@@ -29,6 +30,9 @@
 </template>
 
 <script>
+    const {
+        remote
+    } = require('electron');
     const path = require("path");
     const dayjs = require("dayjs");
     import emitter from "_src/util/emitter";
@@ -90,6 +94,10 @@
                 emitter.emit("getAppSetting", (data) => {
                     this.tableData = data.quickStartApp;
                 })
+            },
+            closeWindow() {
+                var win = remote.getCurrentWindow();
+                win.close();
             }
         }
     }
@@ -98,7 +106,7 @@
 <style>
 </style>
 
-<style scoped lang='scss'>
+<style lang='scss'>
     .page-quickStart {
         padding: 40px;
         text-align: center;
@@ -115,5 +123,25 @@
         .el-upload__input {
             display: none !important;
         }
+    }
+
+    .el-table__body-wrapper {
+        overflow-x: hidden !important;
+    }
+
+    .el-table {
+        overflow-y: hidden;
+    }
+
+    .close {
+        cursor: pointer;
+        position: fixed;
+        top: 0;
+        right: 0;
+        text-align: center;
+        font-size: 29px;
+        width: 40px;
+        height: 40px;
+        background: #f5f3f3 url(../assets/image/close.png) no-repeat center center / 20px 20px;
     }
 </style>

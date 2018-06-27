@@ -32,7 +32,7 @@
     export default {
         name: 'search',
         created() {
-
+            this.resetSize();
         },
         mounted() {
             ipcRenderer.on("focusSearchInput", () => {
@@ -51,14 +51,8 @@
             }
         },
         watch: {
-            searchResultList(val) {
-                this.activeIndex = 0;
-                this.$nextTick(v => {
-                    ipcRenderer.send("resize", {
-                        width: $('.page-search').width(),
-                        height: $('.page-search').height(),
-                    })
-                })
+            searchResultList() {
+                this.resetSize();
             },
             searchWord() {
                 this.getListByKeywords();
@@ -76,6 +70,19 @@
             bookmarkLi
         },
         methods: {
+            resetSize() {
+                this.activeIndex = 0;
+                this.$nextTick(v => {
+                    let height = $('.page-search').height();
+                    if (this.searchResultList.length == 0) { // fix修改设置之后length=0
+                        height = 47; // 一列的高度
+                    }
+                    ipcRenderer.send("resize", {
+                        width: $('.page-search').width(),
+                        height
+                    })
+                })
+            },
             open(link) {
                 this.$electron.shell.openExternal(link)
             },
@@ -170,7 +177,9 @@
                 if (act.type == "feature") { // 打开新页面
                     if (act.router) {
                         ipcRenderer.send("openWin", {
-                            router: act.router
+                            router: act.router,
+                            resizable: false,
+                            frame: false
                         })
                     } else if (act.view == 'uploadBookmark') {
                         dialog.showOpenDialog({

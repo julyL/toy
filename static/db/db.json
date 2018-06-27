@@ -1,12 +1,16 @@
 {
-  "quickStartApp": [],
+  "quickStartApp": [
+    {
+      "date": "2018-06-27 22:06:01",
+      "name": "1",
+      "path": "C:\\Users\\dell\\Pictures\\1.jpg"
+    }
+  ],
   "feature": [
     {
-      "name": "书签导入",
+      "name": "书签导入(.html格式)",
       "keywords": [
-        "f",
-        "b",
-        "bm",
+        "book",
         "bookmark"
       ],
       "router": "",
@@ -15,61 +19,11 @@
     {
       "name": "添加快速启动",
       "keywords": [
-        "f",
-        "quickStart",
-        "qs"
+        "qs ",
+        " quickStart",
+        "app"
       ],
       "router": "/quickStart"
-    },
-    {
-      "name": "切换桌面模式",
-      "keywords": [
-        "f",
-        "d",
-        "desktop"
-      ],
-      "router": "/desktop"
-    },
-    {
-      "name": "编码转换",
-      "keywords": [
-        "f",
-        "encode"
-      ],
-      "router": "/desktop/encode"
-    },
-    {
-      "name": "json格式化",
-      "keywords": [
-        "f",
-        "jsformat"
-      ],
-      "router": "/desktop/jsonformat"
-    },
-    {
-      "name": "生成二维码",
-      "keywords": [
-        "f",
-        "qrcode"
-      ],
-      "router": "/desktop/qrcode"
-    },
-    {
-      "name": "图片压缩处理",
-      "keywords": [
-        "f",
-        "img"
-      ],
-      "router": "/desktop/minifyimg"
-    },
-    {
-      "name": "静态服务器",
-      "keywords": [
-        "f",
-        "static",
-        "server"
-      ],
-      "router": "/desktop/staticServer"
     }
   ],
   "search": [
@@ -103,9 +57,9 @@
     {
       "name": "Search in Stackoverflow",
       "keywords": [
-        "s",
-        "st",
-        "stackoverflow"
+        "s  ",
+        "  st  ",
+        " sf"
       ],
       "url": "https://stackoverflow.com/search?q="
     },

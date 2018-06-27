@@ -7,6 +7,7 @@
 
  fs.watchFile(configPath, () => {
      emitter.on("getAppSetting", (data) => {
+         debugger;
          appConfig = data;
      })
  });

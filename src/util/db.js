@@ -3,13 +3,8 @@ const fs = require("fs");
 const path = require("path");
 const lowdb = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
-const appSetting = require("../../static/setting/app");
-const db_path = path.resolve(__static, './db/db.json');
-if (!fs.existsSync(db_path)) {
-    fs.writeFileSync(db_path, "")
-}
-
-const adapter = new FileSync(db_path);
+const appSetting = path.resolve(__static, './db/db.json');
+const adapter = new FileSync(path.resolve(__dirname, '../../static/db/db.json'));
 const db = lowdb(adapter);
 
 db.defaults({
