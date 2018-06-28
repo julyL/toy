@@ -31,7 +31,7 @@ export default function openWin(data) {
         }
         win.show()
     })
-    //   mainWindow.webContents.openDevTools({
+    //   win.webContents.openDevTools({
     //     mode: "detach"
     //   });
 

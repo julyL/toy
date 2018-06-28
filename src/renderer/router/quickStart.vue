@@ -8,7 +8,7 @@
         <el-table :data="tableData" class="el-table" border max-height="500">
             <el-table-column label="启动关键字" width="150px" align="center">
                 <template slot-scope="scope">
-                    <el-input v-model="inputName" v-if="inputName&&activeColumn===scope.$index" size="small"></el-input>
+                    <el-input v-model="inputName" v-if="activeColumn===scope.$index" size="small"></el-input>
                     <span style="margin-left: 10px" v-else>{{ scope.row.name }}</span>
                 </template>
             </el-table-column>

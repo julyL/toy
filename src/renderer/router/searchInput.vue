@@ -78,7 +78,7 @@
                         height = 47; // 一列的高度
                     }
                     ipcRenderer.send("resize", {
-                        width: $('.page-search').width(),
+                        width: 700,
                         height
                     })
                 })
@@ -190,7 +190,8 @@
                                 alert("书签仅支持html格式")
                             } else {
                                 fs.createReadStream(filepath).pipe(fs.createWriteStream(path.resolve(__static,
-                                    './pages/bookmark.html')))
+                                    './pages/bookmark.html')));
+                                alert("导入成功")
                             }
                         })
                     }

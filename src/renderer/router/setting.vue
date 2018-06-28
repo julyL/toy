@@ -78,7 +78,6 @@
                             <template slot-scope="scope">
                                 <el-button size="mini" @click="handleSave('feature',scope.$index, scope.row)" v-if="activeTypeIndex.feature===scope.$index">保存</el-button>
                                 <el-button size="mini" @click="handleEdit('feature',scope.$index, scope.row)" v-else="activeFeatureIndex===scope.$index">编辑</el-button>
-                                <el-button size="mini" type="danger" @click="handleDelete(featureList,scope.$index, scope.row)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>

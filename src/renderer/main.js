@@ -11,7 +11,7 @@ window.onerror = function (err, msg) {
   logger(err + ':' + msg)
   console.log('error' + msg);
 }
-
+logger.log("render __static", __static)
 Vue.use(ElementUI);
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))

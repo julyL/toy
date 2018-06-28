@@ -1,5 +1,8 @@
-# my-toy
+# mytoy
 > a desktop application write by electron
+
+### Preview
+![预览图](https://github.com/julyL/toy/tree/master/dist/preview.gif)
 
 ### Feature
 
@@ -27,7 +30,6 @@
 
 
 #### Build Setup
-
 ``` bash
 # install dependencies
 npm install

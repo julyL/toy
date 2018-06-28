@@ -2,14 +2,12 @@
  import emitter from "_src/util/emitter";
  const fs = require("fs");
  const path = require("path");
- const configPath = path.resolve(__static, './db/db.json');
- var appConfig = require('_static/db/db.json');
+ const configPath = setStaticPath('./config.json');
+ var appConfig = JSON.parse(fs.readFileSync(configPath));
+ console.log(appConfig);
 
  fs.watchFile(configPath, () => {
-     emitter.on("getAppSetting", (data) => {
-         debugger;
-         appConfig = data;
-     })
+     appConfig = JSON.parse(fs.readFileSync(configPath));
  });
 
  function isMatchKeyword(word, matchKeyword, preReg, nextReg) {
