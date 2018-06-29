@@ -16,9 +16,9 @@ import openWin from './openWin.js';
 import '../util/db.js';
 
 // static变量对应static文件夹
-global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
+// global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
 const logger = require('../util/logger.js');
-
+logger.log("main __static", __static)
 let mainWindow, loadingScreen;
 const winURL = process.env.NODE_ENV === 'development' ?
   `http://localhost:9080` :
@@ -31,7 +31,8 @@ function createWindow() {
   /**
    * Initial window options
    */
-  let iconPath = path.join(__dirname, "../../build/icons/app-icon.png");
+  // 因为打包之后的路径和开发时路径是不一致的,而大图片是不会打包到js中,不采用__static打包时会报错
+  let iconPath = path.join(__static, "./image/icons/app-icon.png");
   mainWindow = new BrowserWindow({
     icon: iconPath,
     width: 700,
@@ -45,9 +46,9 @@ function createWindow() {
   tray = new Tray(iconPath);
   setTray(mainWindow, tray)
 
-  //   mainWindow.webContents.openDevTools({
-  //     mode: "detach"
-  //   });
+  // mainWindow.webContents.openDevTools({
+  //   mode: "detach"
+  // });
 
   mainWindow.once('ready-to-show', () => {
     if (loadingScreen) {

@@ -1,7 +1,7 @@
 {
-  "name": "my-toy",
-  "productName": "my-toy",
-  "version": "0.0.1",
+  "name": "mytoy",
+  "productName": "mytoy",
+  "version": "1.0.0",
   "author": "julyL <849424162@qq.com>",
   "description": "An electron-vue project",
   "license": null,
@@ -19,15 +19,14 @@
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "postinstall": "",
-    "setup": "node .electron-vue/build-installer.js",
-    "move:all": "node .electron-vue/movefile.js",
-    "move:main": "node .electron-vue/movefile.js main"
+    "setup": "node .electron-vue/build-installer.js"
   },
   "dependencies": {
     "bookmarks-parser": "^1.0.0",
     "dayjs": "^1.6.5",
     "element-ui": "^2.4.0",
     "jquery": "^3.3.1",
+    "lodash": "^4.17.10",
     "log4js": "^2.6.1",
     "lowdb": "^1.0.0",
     "node-notifier": "^5.2.1",
