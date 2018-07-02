@@ -89,6 +89,8 @@
             handleKeydown(e) {
                 let len = this.searchResultList.length;
                 switch (e.keyCode) {
+                    case 67: // alt+c 清空输入内容
+                        this.searchWord = '';
                     case 38: // up
                         this.fixPointerPosition();
                         this.activeIndex = (this.activeIndex - 1 + len) % len;

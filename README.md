@@ -1,5 +1,5 @@
 # mytoy
-> a desktop application write by electron,use ALt+D to toggle show or hide
+>  采用electron开发的桌面小工具, Alt+D进行显示切换,在搜索框获得焦点时Alt+C可清空搜索内容 
 
 [下载地址](https://github.com/julyL/toy/releases)
 

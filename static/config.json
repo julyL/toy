@@ -1,6 +1,7 @@
 {
   "quickStartApp": [],
-  "feature": [{
+  "feature": [
+    {
       "name": "书签导入(.html格式)",
       "keywords": [
         "book",
@@ -19,7 +20,8 @@
       "router": "/quickStart"
     }
   ],
-  "search": [{
+  "search": [
+    {
       "name": "Search in GitHub",
       "keywords": [
         "g",
@@ -64,8 +66,12 @@
       "url": "http://map.baidu.com/?newmap=1&ie=utf-8&s=s%26wd%3D"
     }
   ],
-  "shortcut": [{
-    "name": "全局切换显示隐藏",
-    "hotkey": "Alt+d"
-  }]
+  "shortcut": [
+    {
+      "feature": "switchVisible",
+      "name": "全局切换显示隐藏",
+      "hotkey": "Alt+d",
+      "scope": "global"
+    }
+  ]
 }

@@ -65,7 +65,10 @@
     }
   ],
   "shortcut": [{
-    "name": "全局切换显示隐藏",
-    "hotkey": "Alt+d"
-  }]
+      "feature": "switchVisible",
+      "name": "全局切换显示隐藏",
+      "hotkey": "Alt+d",
+      "scope": "global"
+    }
+  ]
 }

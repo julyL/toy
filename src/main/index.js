@@ -75,7 +75,18 @@ function createWindow() {
 app.on('ready', function () {
   loadingScreen = setLoading(); // 加载动画
   createWindow(); // 初始化窗口
-  setShortcut(); // 设置快捷键
+  emitter.emit("getAppSetting", (data) => {
+    let shortKeys = data.shortcut.reduce((prev, next) => {
+      prev[next.feature] = next;
+      return prev;
+    }, {});
+    setShortcut({ // 注册切换快捷键
+      hotkey: shortKeys.switchVisible.hotkey,
+      cb: () => {
+        emitter.emit("switchVisible");
+      }
+    });
+  })
 })
 
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
@@ -111,6 +122,7 @@ ipcMain.on("resize", function (event, size) {
 });
 
 ipcMain.on("setShortcut", function (event, data) {
+  data.cb || (data.cb = () => emitter.emit("switchVisible"));
   setShortcut(data).then(() => {
     event.sender.send("setShortcut:success", data)
   }, (err) => {
